@@ -11,6 +11,13 @@ repositories {
 }
 
 dependencies {
+    // Lombok dependency used only during compilation
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    // For tests, if needed
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
     // JUnit Jupiter API for writing tests
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
 
