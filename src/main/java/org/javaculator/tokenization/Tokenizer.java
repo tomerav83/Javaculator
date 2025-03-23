@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Tokenizer {
-    private static final Pattern TOKEN_PATTERN = Pattern.compile(
+    public static final Pattern TOKEN_PATTERN = Pattern.compile(
                 "(?<NUMBER>\\d+(\\.\\d+)?)"
                     + "|(?<IDENTIFIER>[a-zA-Z_][a-zA-Z0-9_]*)"
                     + "|(?<STRING>\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*')"
@@ -20,21 +20,12 @@ public class Tokenizer {
         int pos = 0;
 
         while (matcher.find()) {
-            // Check if there is any unrecognized text between tokens.
-            if (matcher.start() != pos) {
-                String unknown = input.substring(pos, matcher.start());
-                tokens.add(new Token(TokenType.UNKNOWN, unknown, pos));
-            }
-
+            Token.createPrefix(matcher, input, pos).ifPresent(tokens::add);
             pos = matcher.end();
-
             tokens.add(Token.create(matcher));
         }
 
-        // Capture any trailing unrecognized text.
-        if (pos < input.length()) {
-            tokens.add(new Token(TokenType.UNKNOWN, input.substring(pos), pos));
-        }
+        Token.createSuffix(matcher, input, pos).ifPresent(tokens::add);
 
         return tokens;
     }

@@ -1,5 +1,7 @@
 package org.javaculator.tokenization;
 
+import org.javaculator.tokenization.utils.ErrorlessMatcher;
+
 import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -30,6 +32,7 @@ public enum TokenType {
     }
 
     private boolean matchTokenGroup(Matcher matcher) {
-        return matcher.group(tokenGroup) != null && predicate.test(matcher.group());
+        return ErrorlessMatcher.errorSafeGroup(matcher, tokenGroup) &&
+                ErrorlessMatcher.errorSafeGroup(matcher, predicate);
     }
 }
