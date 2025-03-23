@@ -7,10 +7,10 @@ import java.util.regex.Pattern;
 
 public class Tokenizer {
     public static final Pattern TOKEN_PATTERN = Pattern.compile(
-                "(?<NUMBER>\\d+(\\.\\d+)?)"
+            "(?<NUMBER>\\d+\\.?\\d*|\\.\\d+)"
                     + "|(?<IDENTIFIER>[a-zA-Z_][a-zA-Z0-9_]*)"
                     + "|(?<STRING>\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*')"
-                    + "|(?<OPERATOR>==|!=|<=|>=|[=+\\-*/%])"
+                    + "|(?<OPERATOR>==|!=|<=|>=|\\+\\+|--|[=+\\-*/%])"
                     + "|(?<PUNCTUATION>[;(),{}])");
 
 
@@ -25,7 +25,7 @@ public class Tokenizer {
             tokens.add(Token.create(matcher));
         }
 
-        Token.createSuffix(matcher, input, pos).ifPresent(tokens::add);
+        Token.createSuffix(input, pos).ifPresent(tokens::add);
 
         return tokens;
     }

@@ -12,6 +12,7 @@ public enum TokenType {
     OPERATOR((String ignored) -> true, "OPERATOR"),
     KEYWORD((String value) -> value.equals("var"), "IDENTIFIER"),
     STRING((String ignored) -> true, "STRING"),
+    PUNCTUATION((String ignored) -> true, "PUNCTUATION"),
     UNKNOWN((String ignored) -> true, "UNKNOWN");
 
     private final Predicate<String> predicate;

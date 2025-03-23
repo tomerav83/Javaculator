@@ -18,7 +18,7 @@ public record Token(TokenType type, String value, int pos) {
                 .map((String prefixToken) -> new Token(TokenType.UNKNOWN, prefixToken, pos));
     }
 
-    public static Optional<Token> createSuffix(Matcher matcher, String input, int pos) {
+    public static Optional<Token> createSuffix(String input, int pos) {
         String suffixToken = pos < input.length() ? input.substring(pos) : null;
 
         return Optional.ofNullable(suffixToken)
