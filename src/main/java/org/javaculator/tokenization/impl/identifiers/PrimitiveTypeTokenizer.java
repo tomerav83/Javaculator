@@ -7,6 +7,6 @@ public class PrimitiveTypeTokenizer extends NonDelimitedTokenizer {
     public static final PrimitiveTypeTokenizer INSTANCE = new PrimitiveTypeTokenizer();
 
     private PrimitiveTypeTokenizer() {
-        super("\\b(byte|short|int|long|float|double|boolean|char)\\b", TokenType.PRIMITIVE);
+        super("(?<!\\$)\\b(?:byte|short|int|long|float|double|boolean|char)\\b", TokenType.PRIMITIVE);
     }
 }
