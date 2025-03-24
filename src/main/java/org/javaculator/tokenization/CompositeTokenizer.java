@@ -1,10 +1,12 @@
 package org.javaculator.tokenization;
 
 import org.javaculator.tokenization.abs.Tokenizer;
-import org.javaculator.tokenization.impl.numbers.NumberTokenizer;
 import org.javaculator.tokenization.impl.misc.WhitespaceTokenizer;
 import org.javaculator.tokenization.impl.identifiers.VariableTokenizer;
 import org.javaculator.tokenization.impl.identifiers.PrimitiveTypeTokenizer;
+import org.javaculator.tokenization.impl.numbers.BinaryTokenizer;
+import org.javaculator.tokenization.impl.numbers.HexadecimalTokenizer;
+import org.javaculator.tokenization.impl.numbers.OctalTokenizer;
 import org.javaculator.tokenization.impl.operators.*;
 import org.javaculator.tokenization.impl.parenthesis.LeftParenTokenizer;
 import org.javaculator.tokenization.impl.parenthesis.RightParenTokenizer;
@@ -26,7 +28,9 @@ public class CompositeTokenizer {
             ShiftOperatorTokenizer.INSTANCE,
             LeftParenTokenizer.INSTANCE,
             RightParenTokenizer.INSTANCE,
-            NumberTokenizer.INSTANCE,
+            BinaryTokenizer.INSTANCE,
+            HexadecimalTokenizer.INSTANCE,
+            OctalTokenizer.INSTANCE,
             WhitespaceTokenizer.INSTANCE);
 
     public static List<Token> tokenize(String input) {

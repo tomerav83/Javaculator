@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public abstract class Tokenizer {
         if (input == null) {
             return Collections.emptyList();
         }
-        
+
         return pattern.matcher(input).results()
                 .filter((MatchResult matchResult) -> !delimiters.contains(matchResult.group()))
                 .map((MatchResult matchResult) -> Token.create(matchResult, type))

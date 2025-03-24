@@ -20,6 +20,9 @@ public enum TokenType {
 
     // numbers,literals
     NUMBER,
+    HEXADECIMAL,
+    BINARY,
+    OCTAL,
 
     // unrecognized
     UNKNOWN
