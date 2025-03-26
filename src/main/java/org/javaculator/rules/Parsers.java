@@ -2,17 +2,17 @@ package org.javaculator.rules;
 
 import org.javaculator.rules.numbers.Digits;
 import org.javaculator.rules.numbers.Numbers;
+import org.javaculator.rules.numbers.NumericLiterals;
 import org.parboiled.Rule;
 
 public class Parsers {
-    private static final Javarser PARSER = Javarser.create();
-
-    public static Rule number() {
-        return PARSER.numberMatcher();
+    // literals
+    public static Rule integerLiteral() {
+        return NumericLiterals.INSTANCE.integerLiteral();
     }
 
-    public static Rule whitespace() {
-        return PARSER.whitespaceMatcher();
+    public static Rule floatLiteral() {
+        return NumericLiterals.INSTANCE.floatLiteral();
     }
 
     // numbers
