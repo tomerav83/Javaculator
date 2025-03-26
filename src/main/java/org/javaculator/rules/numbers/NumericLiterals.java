@@ -11,12 +11,17 @@ import org.parboiled.annotations.SuppressSubnodes;
 public class NumericLiterals extends BaseParser<Object> {
     public static final NumericLiterals INSTANCE = new NumericLiterals();
 
+
+    public Rule numberLiteral() {
+        return FirstOf(integerLiteral(), floatLiteral());
+    }
+
     @SuppressSubnodes
-    public Rule integerLiteral() {
+    Rule integerLiteral() {
         return Sequence(FirstOf(Parsers.hexNumber(), Parsers.octalNumber(), Parsers.decimalNumber()), Optional(AnyOf("lL")));
     }
 
-    public Rule floatLiteral() {
+    Rule floatLiteral() {
         return FirstOf(Parsers.hexFloatNumber(), Parsers.decimalFloatNumber());
     }
 }

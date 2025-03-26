@@ -3,16 +3,18 @@ package org.javaculator.rules;
 import org.javaculator.rules.numbers.Digits;
 import org.javaculator.rules.numbers.Numbers;
 import org.javaculator.rules.numbers.NumericLiterals;
+import org.javaculator.rules.numeric.expression.NumericExpression;
 import org.parboiled.Rule;
 
 public class Parsers {
-    // literals
-    public static Rule integerLiteral() {
-        return NumericLiterals.INSTANCE.integerLiteral();
+    // numeric expression
+    public static Rule numericExpression() {
+        return NumericExpression.INSTANCE.expression();
     }
 
-    public static Rule floatLiteral() {
-        return NumericLiterals.INSTANCE.floatLiteral();
+    // literals
+    public static Rule numberLiteral() {
+        return NumericLiterals.INSTANCE.numberLiteral();
     }
 
     // numbers
