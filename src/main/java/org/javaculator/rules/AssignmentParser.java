@@ -12,6 +12,13 @@ public class AssignmentParser<T> extends BaseParser<T> {
         return Parboiled.createParser(AssignmentParser.class);
     }
 
+    public Rule digit() {
+        return Sequence(
+                CharRange('0', '9'),
+                EOI
+        );
+    }
+
     public Rule whitespace() {
         return ZeroOrMore(AnyOf(" \t\f"));
     }
