@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'antlr'
 }
 
 group = 'org.javaculator'
@@ -10,6 +11,8 @@ repositories {
 }
 
 dependencies {
+    antlr "org.antlr:antlr4:4.13.1"
+    implementation "org.antlr:antlr4-runtime:4.13.1"
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
@@ -17,3 +20,13 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-visitor", "-long-messages"]
+}
+
+//sourceSets.main.java.srcDirs += 'build/generated-src/antlr/main'
+
+compileJava.dependsOn generateGrammarSource
+
