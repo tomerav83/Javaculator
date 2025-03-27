@@ -1,16 +1,19 @@
 package org.javaculator.antlr4;
 
-
-import org.javaculator.antlr4.CalculationException.Type;
+import org.javaculator.antlr4.op.lr.impl.AddSubOp;
+import org.javaculator.antlr4.op.lr.impl.MulDivModOp;
+import org.javaculator.antlr4.op.unary.impl.PostDecOp;
+import org.javaculator.antlr4.op.unary.impl.PostIncOp;
+import org.javaculator.antlr4.op.unary.impl.PreDecOp;
+import org.javaculator.antlr4.op.unary.impl.PreIncOp;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class CalculationInterpreter extends CalcBaseVisitor<Integer> {
     private final Map<String, Integer> vars = new HashMap<>();
 
-    public void setVar(String name, int value) {
+    public void setVar(String name, Integer value) {
         vars.put(name, value);
     }
 
@@ -41,53 +44,32 @@ public class CalculationInterpreter extends CalcBaseVisitor<Integer> {
 
     @Override
     public Integer visitAddSubExpr(CalcParser.AddSubExprContext ctx) {
-        int left = visit(ctx.expression(0));
-        int right = visit(ctx.expression(1));
-        return ctx.op.getText().equals("+") ? left + right : left - right;
+        return AddSubOp.handle(ctx, this::visit);
     }
 
     @Override
     public Integer visitMulDivModExpr(CalcParser.MulDivModExprContext ctx) {
-        int left = visit(ctx.expression(0));
-        int right = visit(ctx.expression(1));
-        return switch (ctx.op.getText()) {
-            case "*" -> left * right;
-            case "/" -> left / right;
-            case "%" -> left % right;
-            default -> throw new RuntimeException("Unknown op: " + ctx.op.getText());
-        };
+        return MulDivModOp.handle(ctx, this::visit);
     }
 
     @Override
     public Integer visitPreIncrementExpr(CalcParser.PreIncrementExprContext ctx) {
-        String id = ctx.ID().getText();
-        int val = vars.getOrDefault(id, 0) + 1;
-        vars.put(id, val);
-        return val;
+      return PreIncOp.handle(ctx, vars);
     }
 
     @Override
     public Integer visitPreDecrementExpr(CalcParser.PreDecrementExprContext ctx) {
-        String id = ctx.ID().getText();
-        int val = vars.getOrDefault(id, 0) - 1;
-        vars.put(id, val);
-        return val;
+        return PreDecOp.handle(ctx, vars);
     }
 
     @Override
     public Integer visitPostIncrementExpr(CalcParser.PostIncrementExprContext ctx) {
-        String id = ctx.ID().getText();
-        int val = vars.getOrDefault(id, 0);
-        vars.put(id, val + 1);
-        return val;
+        return PostIncOp.handle(ctx, vars);
     }
 
     @Override
     public Integer visitPostDecrementExpr(CalcParser.PostDecrementExprContext ctx) {
-        String id = ctx.ID().getText();
-        int val = vars.getOrDefault(id, 0);
-        vars.put(id, val - 1);
-        return val;
+        return PostDecOp.handle(ctx, vars);
     }
 
     @Override
