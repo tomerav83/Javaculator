@@ -11,4 +11,8 @@ public class ParserCtxUtils {
     public static TerminalNode getIdentifier(CalcParser.ExpressionContext ctx) {
         return ctx.getToken(CalcParser.ID, 0);
     }
+
+    public static Integer getLiteral(CalcParser.ExpressionContext ctx) {
+        return Integer.parseInt(ctx.getToken(CalcParser.INT, 0).getText());
+    }
 }

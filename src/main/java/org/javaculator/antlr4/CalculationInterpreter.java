@@ -2,10 +2,8 @@ package org.javaculator.antlr4;
 
 import org.javaculator.antlr4.op.lr.impl.AddSubOp;
 import org.javaculator.antlr4.op.lr.impl.MulDivModOp;
-import org.javaculator.antlr4.op.unary.impl.PostDecOp;
-import org.javaculator.antlr4.op.unary.impl.PostIncOp;
-import org.javaculator.antlr4.op.unary.impl.PreDecOp;
-import org.javaculator.antlr4.op.unary.impl.PreIncOp;
+import org.javaculator.antlr4.op.unary.impl.*;
+import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,12 +72,12 @@ public class CalculationInterpreter extends CalcBaseVisitor<Integer> {
 
     @Override
     public Integer visitIntLiteral(CalcParser.IntLiteralContext ctx) {
-        return Integer.parseInt(ctx.INT().getText());
+        return ParserCtxUtils.getLiteral(ctx);
     }
 
     @Override
     public Integer visitIdentifier(CalcParser.IdentifierContext ctx) {
-        return vars.getOrDefault(ctx.ID().getText(), 0);
+        return IdentifierOP.handle(ctx, vars);
     }
 
     @Override

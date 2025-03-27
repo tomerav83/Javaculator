@@ -18,7 +18,7 @@ public class PreIncOp extends UnaryExprOp<CalcParser.PreIncrementExprContext> {
 
     @Override
     protected Integer apply(Map<String, Integer> vars) throws CalculationException {
-        if (!isIdentifierSetNonNull(vars)) {
+        if (isIdentifierNotSetOrNull(vars)) {
             throw new CalculationException(Type.MISSING_OR_NULL_IDENTIFIER, identifier);
         }
 

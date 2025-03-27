@@ -7,13 +7,13 @@ import org.javaculator.antlr4.op.unary.UnaryExprOp;
 
 import java.util.Map;
 
-public class PreDecOp extends UnaryExprOp<CalcParser.PreDecrementExprContext> {
-    private PreDecOp(CalcParser.PreDecrementExprContext ctx) {
+public class IdentifierOP extends UnaryExprOp<CalcParser.IdentifierContext> {
+    private IdentifierOP(CalcParser.IdentifierContext ctx) {
         super(ctx);
     }
 
-    public static Integer handle(CalcParser.PreDecrementExprContext ctx, Map<String, Integer> vars) {
-        return new PreDecOp(ctx).apply(vars);
+    public static Integer handle(CalcParser.IdentifierContext ctx, Map<String, Integer> vars) {
+        return new IdentifierOP(ctx).apply(vars);
     }
 
     @Override
@@ -22,6 +22,6 @@ public class PreDecOp extends UnaryExprOp<CalcParser.PreDecrementExprContext> {
             throw new CalculationException(Type.MISSING_OR_NULL_IDENTIFIER, identifier);
         }
 
-        return vars.merge(identifier, -1, Integer::sum);
+        return vars.get(identifier);
     }
 }
