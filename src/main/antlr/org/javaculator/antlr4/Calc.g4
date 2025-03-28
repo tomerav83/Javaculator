@@ -25,13 +25,14 @@ multiplicativeExpr
 unaryExpr
     : ('+'|'-') unaryExpr                                #SignedUnaryExpr
     | ('++' | '--') ID                                   #PreUnaryExpr
+    | ID ('++' | '--')                                   #PostUnaryExpr
     | primaryExpr                                        #RootPrimaryExpr
     ;
 
 // Primary expressions.
 primaryExpr
     : INT                                                #LiteralExpr
-    | ID (('++' | '--'))?                                #PostUnaryExpr
+    | ID                                                 #IdentifierExpr
     | '(' expression ')'                                 #ParenExpr
     ;
 

@@ -9,6 +9,6 @@ public class Main {
         CalculationProcessor.calculate("a = 1");
         CalculationProcessor.calculate("c = 2");
         CalculationProcessor.calculate("d = 12");
-        System.out.println(CalculationProcessor.calculate("x += a /= c *=  (d *= 2) - 1"));
+        System.out.println(CalculationProcessor.calculate("x = a += c *=  (d /= 5) - 1"));
     }
 }

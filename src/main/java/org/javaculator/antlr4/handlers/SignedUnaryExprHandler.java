@@ -3,6 +3,7 @@ package org.javaculator.antlr4.handlers;
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IVisitorExprHandler;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -10,7 +11,7 @@ public class SignedUnaryExprHandler implements IVisitorExprHandler<CalcParser.Si
     public static final SignedUnaryExprHandler INSTANCE = new SignedUnaryExprHandler();
 
     @Override
-    public Optional<Integer> handle(CalcParser.SignedUnaryExprContext ctx, Function<CalcParser.UnaryExprContext, Integer> visitor) {
+    public Optional<BigDecimal> handle(CalcParser.SignedUnaryExprContext ctx, Function<CalcParser.UnaryExprContext, BigDecimal> visitor) {
         if (ctx.unaryExpr() == null) {
             return Optional.empty();
         }
@@ -18,7 +19,7 @@ public class SignedUnaryExprHandler implements IVisitorExprHandler<CalcParser.Si
         String op = ctx.getChild(0).getText();
 
         return switch (op) {
-            case "-" -> Optional.of(-visitor.apply(ctx.unaryExpr()));
+            case "-" -> Optional.of(visitor.apply(ctx.unaryExpr()).negate());
             case "+" -> Optional.of(visitor.apply(ctx.unaryExpr()));
             default ->  throw new RuntimeException("Unknown operator: " + op);
         };

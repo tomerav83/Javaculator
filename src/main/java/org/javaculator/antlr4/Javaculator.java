@@ -1,73 +1,80 @@
 package org.javaculator.antlr4;
 
 import org.javaculator.antlr4.handlers.*;
+import org.javaculator.antlr4.snapshot.Snapshot;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Javaculator extends CalcBaseVisitor<Integer> {
-    private final Map<String, Integer> vars = new HashMap<>();
+public class Javaculator extends CalcBaseVisitor<BigDecimal> {
+    private final Snapshot snapshot = new Snapshot();
 
-    public Map<String, Integer> getVars() {
-        return vars;
+    public Snapshot getSnapshot() {
+        return snapshot;
     }
-    public void clearVars() {vars.clear();}
+    public void clearVars() {snapshot.clear();}
 
     // assignment
 
     @Override
-    public Integer visitAssignExpr(CalcParser.AssignExprContext ctx) {
-        return AssignExprHandler.INSTANCE.handle(ctx, vars, this::visit).orElse(0);
+    public BigDecimal visitAssignExpr(CalcParser.AssignExprContext ctx) {
+        return AssignExprHandler.INSTANCE.handle(ctx, snapshot, this::visit).orElse(BigDecimal.ZERO);
     }
 
     @Override
-    public Integer visitRootAddExpr(CalcParser.RootAddExprContext ctx) {
-        return RootAddExprHandler.INSTANCE.handle(ctx, this::visit).orElse(0);
+    public BigDecimal visitRootAddExpr(CalcParser.RootAddExprContext ctx) {
+        return RootAddExprHandler.INSTANCE.handle(ctx, this::visit).orElse(BigDecimal.ZERO);
     }
 
     // mult
 
     @Override
-    public Integer visitRootMultExpr(CalcParser.RootMultExprContext ctx) {
-        return RootMultExprHandler.INSTANCE.handle(ctx, this::visit).orElse(0);
+    public BigDecimal visitRootMultExpr(CalcParser.RootMultExprContext ctx) {
+        return RootMultExprHandler.INSTANCE.handle(ctx, this::visit).orElse(BigDecimal.ZERO);
     }
 
     @Override
-    public Integer visitRootUnaryExpr(CalcParser.RootUnaryExprContext ctx) {
-        return RootUnaryExprHandler.INSTANCE.handle(ctx, this::visit).orElse(0);
+    public BigDecimal visitRootUnaryExpr(CalcParser.RootUnaryExprContext ctx) {
+        return RootUnaryExprHandler.INSTANCE.handle(ctx, this::visit).orElse(BigDecimal.ZERO);
     }
 
     @Override
-    public Integer visitSignedUnaryExpr(CalcParser.SignedUnaryExprContext ctx) {
-        return SignedUnaryExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
+    public BigDecimal visitSignedUnaryExpr(CalcParser.SignedUnaryExprContext ctx) {
+        return SignedUnaryExprHandler.INSTANCE.handle(ctx, this::visit).orElse(BigDecimal.ZERO);
     }
 
     @Override
-    public Integer visitPreUnaryExpr(CalcParser.PreUnaryExprContext ctx) {
-        return PreUnaryExprHandler.INSTANCE.handle(ctx, vars).orElse(0);
+    public BigDecimal visitPreUnaryExpr(CalcParser.PreUnaryExprContext ctx) {
+        return PreUnaryExprHandler.INSTANCE.handle(ctx, snapshot).orElse(BigDecimal.ZERO);
     }
 
     @Override
-    public Integer visitRootPrimaryExpr(CalcParser.RootPrimaryExprContext ctx) {
+    public BigDecimal visitPostUnaryExpr(CalcParser.PostUnaryExprContext ctx) {
+        return PostUnaryExprHandler.INSTANCE.handle(ctx, snapshot).orElse(BigDecimal.ZERO);
+    }
+
+    @Override
+    public BigDecimal visitRootPrimaryExpr(CalcParser.RootPrimaryExprContext ctx) {
         return RootPrimaryExprHandler.INSTANCE.handle(ctx)
                 .map(this::visit)
-                .orElse(0);
+                .orElse(BigDecimal.ZERO);
     }
 
     @Override
-    public Integer visitLiteralExpr(CalcParser.LiteralExprContext ctx) {
-        return LiteralExprHandler.INSTANCE.handle(ctx).orElse(0);
+    public BigDecimal visitIdentifierExpr(CalcParser.IdentifierExprContext ctx) {
+        return IdentifierExprHandler.INSTANCE.handle(ctx, snapshot).orElse(BigDecimal.ZERO);
     }
 
     @Override
-    public Integer visitPostUnaryExpr(CalcParser.PostUnaryExprContext ctx) {
-        return PostUnaryExprHandler.INSTANCE.handle(ctx, vars).orElse(0);
+    public BigDecimal visitLiteralExpr(CalcParser.LiteralExprContext ctx) {
+        return LiteralExprHandler.INSTANCE.handle(ctx).orElse(BigDecimal.ZERO);
     }
 
     @Override
-    public Integer visitParenExpr(CalcParser.ParenExprContext ctx) {
+    public BigDecimal visitParenExpr(CalcParser.ParenExprContext ctx) {
         return ParenExprHandler.INSTANCE.handle(ctx)
                 .map(this::visit)
-                .orElse(0);
+                .orElse(BigDecimal.ZERO);
     }
 }
