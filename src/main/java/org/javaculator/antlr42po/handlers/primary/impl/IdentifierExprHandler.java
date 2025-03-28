@@ -23,7 +23,7 @@ public class IdentifierExprHandler implements IPrimaryExpr {
 
     @Override
     public Integer calculate(Calc2Parser.PrimaryExprContext ctx) {
-        throw new InvalidCalculationImplException(Implementation.IDENTIFIER);
+        throw new InvalidCalculationImplException(Implementation.IDENTIFIER.name());
     }
 
     @Override
@@ -39,6 +39,6 @@ public class IdentifierExprHandler implements IPrimaryExpr {
 
     @Override
     public Integer calculate(Calc2Parser.PrimaryExprContext ctx, Function<Calc2Parser.ExpressionContext, Integer> visitor) {
-        throw new InvalidCalculationImplException(Implementation.IDENTIFIER);
+        throw new InvalidCalculationImplException(Implementation.IDENTIFIER.name());
     }
 }

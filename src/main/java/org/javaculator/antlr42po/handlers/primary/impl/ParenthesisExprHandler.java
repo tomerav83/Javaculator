@@ -21,12 +21,12 @@ public class ParenthesisExprHandler implements IPrimaryExpr {
 
     @Override
     public Integer calculate(Calc2Parser.PrimaryExprContext ctx) {
-        throw new InvalidCalculationImplException(Implementation.PARENS);
+        throw new InvalidCalculationImplException(Implementation.PARENS.name());
     }
 
     @Override
     public Integer calculate(Calc2Parser.PrimaryExprContext ctx, Map<String, Integer> vars) {
-        throw new InvalidCalculationImplException(Implementation.PARENS);
+        throw new InvalidCalculationImplException(Implementation.PARENS.name());
     }
 
     @Override

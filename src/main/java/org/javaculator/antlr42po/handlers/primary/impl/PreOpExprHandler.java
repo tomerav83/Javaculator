@@ -23,7 +23,7 @@ public  class PreOpExprHandler implements IPrimaryExpr {
 
     @Override
     public Integer calculate(Calc2Parser.PrimaryExprContext ctx) {
-        throw new InvalidCalculationImplException(Implementation.PRE_OP);
+        throw new InvalidCalculationImplException(Implementation.PRE_OP.name());
     }
 
     @Override
@@ -44,6 +44,6 @@ public  class PreOpExprHandler implements IPrimaryExpr {
 
     @Override
     public Integer calculate(Calc2Parser.PrimaryExprContext ctx, Function<Calc2Parser.ExpressionContext, Integer> visitor) {
-        throw new InvalidCalculationImplException(Implementation.PRE_OP);
+        throw new InvalidCalculationImplException(Implementation.PRE_OP.name());
     }
 }

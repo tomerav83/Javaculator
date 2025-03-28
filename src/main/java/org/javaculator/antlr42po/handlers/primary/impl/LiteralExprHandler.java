@@ -27,12 +27,12 @@ public class LiteralExprHandler implements IPrimaryExpr {
 
     @Override
     public Integer calculate(Calc2Parser.PrimaryExprContext ctx, Map<String, Integer> vars) {
-        throw new InvalidCalculationImplException(Implementation.LITERAL);
+        throw new InvalidCalculationImplException(Implementation.LITERAL.name());
     }
 
     @Override
     public Integer calculate(Calc2Parser.PrimaryExprContext ctx, Function<Calc2Parser.ExpressionContext, Integer> visitor) {
-        throw new InvalidCalculationImplException(Implementation.LITERAL);
+        throw new InvalidCalculationImplException(Implementation.LITERAL.name());
     }
 
 

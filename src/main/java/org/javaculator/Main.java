@@ -15,6 +15,6 @@ public class Main {
         CalculationProcessor.calculate("a = 1");
         CalculationProcessor.calculate("c = 2");
         CalculationProcessor.calculate("d = 12");
-        System.out.println(CalculationProcessor.calculate("x = d -= a + --c"));
+        System.out.println(CalculationProcessor.calculate("x *= a *= c"));
     }
 }

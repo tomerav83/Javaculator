@@ -2,7 +2,9 @@ package org.javaculator.antlr42po;
 
 import org.javaculator.antlr4.Calc2BaseVisitor;
 import org.javaculator.antlr4.Calc2Parser;
+import org.javaculator.antlr42po.handlers.mult.MultiplicativeExprHandlers;
 import org.javaculator.antlr42po.handlers.primary.PrimaryExprHandlers;
+import org.javaculator.antlr42po.handlers.unary.UnaryExprHandlers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -73,44 +75,13 @@ public class Javaculator extends Calc2BaseVisitor<Integer> {
     // multiplicativeExpr: unaryExpr (('*'|'/'|'%') unaryExpr)* ;
     @Override
     public Integer visitMultiplicativeExpr(Calc2Parser.MultiplicativeExprContext ctx) {
-        int result = visit(ctx.unaryExpr(0));
-        for (int i = 1; i < ctx.unaryExpr().size(); i++) {
-            String op = ctx.getChild(2 * i - 1).getText();
-            int right = visit(ctx.unaryExpr(i));
-            switch (op) {
-                case "*":
-                    result *= right;
-                    break;
-                case "/":
-                    result /= right;
-                    break;
-                case "%":
-                    result %= right;
-                    break;
-                default:
-                    throw new RuntimeException("Unknown operator: " + op);
-            }
-        }
-        return result;
+        return MultiplicativeExprHandlers.handle(ctx, this::visitUnaryExpr);
     }
 
     // unaryExpr: ('+'|'-') unaryExpr | primaryExpr ;
     @Override
     public Integer visitUnaryExpr(Calc2Parser.UnaryExprContext ctx) {
-        if (ctx.getChildCount() == 2) {
-            // The first child is the unary operator.
-            String op = ctx.getChild(0).getText();
-
-            return switch (op) {
-                case "-" -> -visit(ctx.unaryExpr());
-                case "+" -> visit(ctx.unaryExpr());
-                case "--" -> vars.merge(ctx.ID().getText(), -1, Integer::sum);
-                case "++" -> vars.merge(ctx.ID().getText(), 1, Integer::sum);
-                default ->  throw new RuntimeException("Unknown operator: " + op);
-            };
-        } else {
-            return visit(ctx.primaryExpr());
-        }
+        return UnaryExprHandlers.handle(ctx, vars, this::visitUnaryExpr, this::visitPrimaryExpr);
     }
 
     // primaryExpr: INT | ID | '(' expression ')' ;
