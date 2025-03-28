@@ -1,4 +1,4 @@
-package org.javaculator.antlr42po.handlers.mult;
+package org.javaculator.antlr42po.handlers.multiplicative;
 
 import org.javaculator.antlr4.Calc2Parser;
 

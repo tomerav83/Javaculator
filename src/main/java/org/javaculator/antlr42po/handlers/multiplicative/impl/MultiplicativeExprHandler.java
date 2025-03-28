@@ -1,7 +1,7 @@
-package org.javaculator.antlr42po.handlers.mult.impl;
+package org.javaculator.antlr42po.handlers.multiplicative.impl;
 
 import org.javaculator.antlr4.Calc2Parser;
-import org.javaculator.antlr42po.handlers.mult.IMultiplicativeExpr;
+import org.javaculator.antlr42po.handlers.multiplicative.IMultiplicativeExpr;
 
 import java.util.function.Function;
 

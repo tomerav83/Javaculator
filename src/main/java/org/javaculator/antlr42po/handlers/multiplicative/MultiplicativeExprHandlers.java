@@ -1,14 +1,8 @@
-package org.javaculator.antlr42po.handlers.mult;
+package org.javaculator.antlr42po.handlers.multiplicative;
 
 import org.javaculator.antlr4.Calc2Parser;
-import org.javaculator.antlr42po.handlers.mult.impl.MultiplicativeExprHandler;
-import org.javaculator.antlr42po.handlers.primary.IPrimaryExpr;
-import org.javaculator.antlr42po.handlers.primary.impl.IdentifierExprHandler;
-import org.javaculator.antlr42po.handlers.primary.impl.LiteralExprHandler;
-import org.javaculator.antlr42po.handlers.primary.impl.ParenthesisExprHandler;
-import org.javaculator.antlr42po.handlers.primary.impl.PreOpExprHandler;
+import org.javaculator.antlr42po.handlers.multiplicative.impl.MultiplicativeExprHandler;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
