@@ -1,0 +1,59 @@
+package org.javaculator.antlr4.handlers.primary;
+
+import org.javaculator.antlr4.Calc2Parser;
+import org.javaculator.antlr4.CalcParser;
+import org.javaculator.antlr42po.CalculationProcessor;
+import org.javaculator.antlr42po.exceptions.InvalidCalculationImplException;
+import org.javaculator.antlr42po.handlers.primary.impl.LiteralExprHandler;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.Map;
+
+public class PrimaryExprHandlersTest {
+    @Nested
+    class LiteralExprHandlerTests {
+        @BeforeEach
+        void init() {
+            CalculationProcessor.clearState();
+        }
+
+        @Test
+        @DisplayName("test invalid calculate impl call - case1")
+        void testInvalidCalculateImplCallCase1() {
+            Assertions.assertThrows(InvalidCalculationImplException.class,
+                    () -> LiteralExprHandler.INSTANCE.calculate(null, Map.of()));
+        }
+
+        @Test
+        @DisplayName("test invalid calculate impl call - case2")
+        void testInvalidCalculateImplCallCase2() {
+            Assertions.assertThrows(InvalidCalculationImplException.class,
+                    () -> LiteralExprHandler.INSTANCE.calculate(null, (Calc2Parser.ExpressionContext ctx) -> 0));
+        }
+
+        @ParameterizedTest(name = "Primary expression: Type=Literal, value={0}")
+        @CsvSource({
+                "l = 42, l:42", "l = -1, l:-1", "l = +1, l:1",
+                "l = (42), l:42", "l = (-1), l:-1", "l = (+1), l:1",
+                "l = (((42))), l:42", "l = (((-1))), l:-1", "l = (((+1))), l:1"
+        })
+        void testValidPrimaryExprLiterals(String input,
+                                          @ConvertWith(CsvMapConverter.class) Map<String, Integer> expected) {
+            Assertions.assertEquals(expected, CalculationProcessor.calculate(input));
+        }
+
+
+        @ParameterizedTest(name = "Primary expression: Type=Literal, value={0}")
+        @CsvSource({
+                "l = a42", "l = -a1", "l = +a1",
+                "l = ++1", "l = --1", "l = 1++", "l = 1--",
+                "l = ()",
+        })
+        void testInvalidPrimaryExprLiterals(String input) {
+            Assertions.assertEquals(0, CalculationProcessor.calculate(input).size());
+        }
+    }
+}

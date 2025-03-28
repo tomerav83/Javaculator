@@ -1,8 +1,12 @@
 package org.javaculator.antlr4;
 
-import org.javaculator.antlr4.op.lr.impl.AddSubOp;
-import org.javaculator.antlr4.op.lr.impl.MulDivModOp;
-import org.javaculator.antlr4.op.unary.impl.*;
+import org.javaculator.antlr4.op.assignment.AssignExprOp;
+import org.javaculator.antlr4.op.assignment.AugmentedAssignExprOp;
+import org.javaculator.antlr4.op.lr.AddSubOp;
+import org.javaculator.antlr4.op.lr.MulDivModOp;
+import org.javaculator.antlr4.op.signed.SignedIdentifierExprOp;
+import org.javaculator.antlr4.op.signed.SignedNumberExprOp;
+import org.javaculator.antlr4.op.unary.*;
 import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.util.HashMap;
@@ -20,24 +24,13 @@ public class CalculationInterpreter extends CalcBaseVisitor<Integer> {
     }
 
     @Override
-    public Integer visitProg(CalcParser.ProgContext ctx) {
-        String varName = ctx.lhs().ID().getText();
-        int rhs = visit(ctx.expression());
-        String op = ctx.op.getText();
+    public Integer visitAssignExpr(CalcParser.AssignExprContext ctx) {
+        return AssignExprOp.handle(ctx, vars, this::visit);
+    }
 
-        int current = vars.getOrDefault(varName, 0);
-        int result = switch (op) {
-            case "=" -> rhs;
-            case "+=" -> current + rhs;
-            case "-=" -> current - rhs;
-            case "*=" -> current * rhs;
-            case "/=" -> current / rhs;
-            case "%=" -> current % rhs;
-            default -> throw new RuntimeException("Unknown assignment: " + op);
-        };
-
-        vars.put(varName, result);
-        return result;
+    @Override
+    public Integer visitAugmentedAssignExpr(CalcParser.AugmentedAssignExprContext ctx) {
+        return AugmentedAssignExprOp.handle(ctx, vars, this::visit);
     }
 
     @Override
@@ -48,6 +41,16 @@ public class CalculationInterpreter extends CalcBaseVisitor<Integer> {
     @Override
     public Integer visitMulDivModExpr(CalcParser.MulDivModExprContext ctx) {
         return MulDivModOp.handle(ctx, this::visit);
+    }
+
+    @Override
+    public Integer visitSignedNumberExpr(CalcParser.SignedNumberExprContext ctx) {
+        return SignedNumberExprOp.handle(ctx);
+    }
+
+    @Override
+    public Integer visitSignedIdentifierExpr(CalcParser.SignedIdentifierExprContext ctx) {
+        return SignedIdentifierExprOp.handle(ctx, vars);
     }
 
     @Override
