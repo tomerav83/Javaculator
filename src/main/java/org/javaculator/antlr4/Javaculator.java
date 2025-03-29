@@ -4,6 +4,7 @@ import org.javaculator.antlr4.handlers.*;
 import org.javaculator.antlr4.handlers.additive.AdditiveExprHandler;
 import org.javaculator.antlr4.handlers.assignment.AssignExprHandler;
 import org.javaculator.antlr4.handlers.assignment.SingletonExprHandler;
+import org.javaculator.antlr4.handlers.literals.FloatingPointHandler;
 import org.javaculator.antlr4.handlers.literals.IdentifierHandler;
 import org.javaculator.antlr4.handlers.literals.IntegerHandler;
 import org.javaculator.antlr4.handlers.literals.LiteralExprHandler;
@@ -67,6 +68,11 @@ public class Javaculator extends CalcBaseVisitor<BigDecimal> {
     @Override
     public BigDecimal visitIdentifier(CalcParser.IdentifierContext ctx) {
         return IdentifierHandler.INSTANCE.handle(ctx, snapshot).orElse(null);
+    }
+
+    @Override
+    public BigDecimal visitFloatingPoint(CalcParser.FloatingPointContext ctx) {
+        return FloatingPointHandler.INSTANCE.handle(ctx).orElse(null);
     }
 
     @Override

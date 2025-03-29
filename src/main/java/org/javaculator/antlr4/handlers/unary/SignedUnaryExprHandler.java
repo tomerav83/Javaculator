@@ -2,6 +2,7 @@ package org.javaculator.antlr4.handlers.unary;
 
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IVisitorExprHandler;
+import org.javaculator.exceptions.UnknownOperatorException;
 import org.javaculator.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ public class SignedUnaryExprHandler implements IVisitorExprHandler<CalcParser.Si
         return switch (op) {
             case "-" -> Optional.of(BigDecimalSupport.negate(current));
             case "+" -> Optional.of(current);
-            default ->  throw new RuntimeException("Unknown operator: " + op);
+            default -> throw new UnknownOperatorException(op);
         };
     }
 }

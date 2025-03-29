@@ -3,6 +3,7 @@ package org.javaculator.antlr4.handlers.assignment;
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IStatefulVisitorExprHandler;
 import org.javaculator.antlr4.snapshot.Snapshot;
+import org.javaculator.exceptions.UnknownOperatorException;
 import org.javaculator.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ public class AssignExprHandler implements IStatefulVisitorExprHandler<CalcParser
             case "*=" -> BigDecimalSupport.multiply(lhs, rhs, true);
             case "/=" -> BigDecimalSupport.div(lhs, rhs, true);
             case "%=" -> BigDecimalSupport.mod(lhs, rhs, true);
-            default -> throw new RuntimeException("Unknown operator: " + op);
+            default ->  throw new UnknownOperatorException(op);
         };
 
         return Optional.ofNullable(snapshot.putAndGetCurrent(identifier, value));

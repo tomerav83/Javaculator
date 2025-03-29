@@ -2,6 +2,7 @@ package org.javaculator.antlr4.handlers.additive;
 
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IVisitorExprHandler;
+import org.javaculator.exceptions.UnknownOperatorException;
 import org.javaculator.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
@@ -26,7 +27,7 @@ public class AdditiveExprHandler implements IVisitorExprHandler<CalcParser.AddSu
             lhs = switch (op) {
                 case "+" -> BigDecimalSupport.add(lhs, rhs, false);
                 case "-" -> BigDecimalSupport.sub(lhs, rhs, false);
-                default -> throw new RuntimeException("Unknown operator: " + op);
+                default -> throw new UnknownOperatorException(op);
             };
         }
 

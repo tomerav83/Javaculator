@@ -2,6 +2,7 @@ package org.javaculator.antlr4.handlers.multiplicative;
 
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IVisitorExprHandler;
+import org.javaculator.exceptions.UnknownOperatorException;
 import org.javaculator.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
@@ -28,7 +29,7 @@ public class MultiplicativeExprHandler implements IVisitorExprHandler<CalcParser
                 case "*" -> BigDecimalSupport.multiply(lhs, rhs, false);
                 case "/" -> BigDecimalSupport.div(lhs, rhs, false);
                 case "%" -> BigDecimalSupport.mod(lhs, rhs, false);
-                default -> throw new RuntimeException("Unknown operator: " + op);
+                default -> throw new UnknownOperatorException(op);
             };
         }
 

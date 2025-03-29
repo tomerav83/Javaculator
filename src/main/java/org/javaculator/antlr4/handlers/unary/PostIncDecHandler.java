@@ -3,6 +3,7 @@ package org.javaculator.antlr4.handlers.unary;
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IStatefulExprHandler;
 import org.javaculator.antlr4.snapshot.Snapshot;
+import org.javaculator.exceptions.UnknownOperatorException;
 import org.javaculator.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ public class PostIncDecHandler implements IStatefulExprHandler<CalcParser.PostIn
                     snapshot.putAndGetPrevious(identifier, BigDecimalSupport.dec(current)));
             case "++" -> Optional.ofNullable(
                     snapshot.putAndGetPrevious(identifier, BigDecimalSupport.inc(current)));
-            default ->  throw new RuntimeException("Unknown operator: " + op);
+            default ->  throw new UnknownOperatorException(op);
         };
     }
 }

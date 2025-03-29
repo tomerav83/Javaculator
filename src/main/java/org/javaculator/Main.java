@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
         CalculationProcessor.calculate("a = 1");
         CalculationProcessor.calculate("c = 2");
-        CalculationProcessor.calculate("d = null");
-        System.out.println(CalculationProcessor.calculate("x = -d"));
+        CalculationProcessor.calculate("d = 12");
+        System.out.println(CalculationProcessor.calculate("x = a += c *=  (d /= 44.) - 1"));
     }
 }

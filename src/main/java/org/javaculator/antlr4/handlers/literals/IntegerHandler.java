@@ -12,6 +12,6 @@ public class IntegerHandler implements IExprHandler<CalcParser.IntegerContext, B
 
     @Override
     public Optional<BigDecimal> handle(CalcParser.IntegerContext ctx) {
-        return Optional.ofNullable(ctx.INT()).map(TerminalNode::getText).map(BigDecimal::new);
+        return Optional.ofNullable(ctx.INT_LITERAL()).map(TerminalNode::getText).map(BigDecimal::new);
     }
 }

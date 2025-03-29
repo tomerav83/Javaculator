@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.javaculator.antlr4.snapshot.Snapshot;
 import org.javaculator.exceptions.InvalidCalculationException;
+import org.javaculator.exceptions.UnknownOperatorException;
 
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class CalculationProcessor {
 
         try {
             CALCULATOR.visit(parser.assignment());
-        } catch (InvalidCalculationException e) {
+        } catch (InvalidCalculationException | UnknownOperatorException e) {
             System.out.println(e.getMessage());
         }
 
