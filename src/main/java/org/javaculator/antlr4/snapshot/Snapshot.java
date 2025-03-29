@@ -5,31 +5,40 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Snapshot {
-    private static final Map<String, BigDecimal> VARS = new HashMap<>();
+    private static final Map<String, BigDecimal> VARIABLE_STATE = new HashMap<>();
+    private static final Map<String, BigDecimal> SNAPSHOT = new HashMap<>();
 
     public void clear() {
-        VARS.clear();
+        VARIABLE_STATE.clear();
+    }
+
+    public Snapshot rollback() {
+        VARIABLE_STATE.clear();
+        VARIABLE_STATE.putAll(SNAPSHOT);
+        SNAPSHOT.clear();
+        return this;
+    }
+
+    public void take() {
+        SNAPSHOT.clear();
+        SNAPSHOT.putAll(VARIABLE_STATE);
     }
 
     public BigDecimal get(String key) {
-        return VARS.get(key);
+        return VARIABLE_STATE.get(key);
     }
 
     public BigDecimal putAndGetCurrent(String key, BigDecimal value) {
-        VARS.put(key, value);
+        VARIABLE_STATE.put(key, value);
         return value;
     }
 
     public BigDecimal putAndGetPrevious(String key, BigDecimal value) {
-        return VARS.put(key, value);
-    }
-
-    public boolean isMissingOrNull(String key) {
-        return !(VARS.containsKey(key) && VARS.get(key) != null);
+        return VARIABLE_STATE.put(key, value);
     }
 
     @Override
     public String toString() {
-        return VARS.toString();
+        return VARIABLE_STATE.toString();
     }
 }

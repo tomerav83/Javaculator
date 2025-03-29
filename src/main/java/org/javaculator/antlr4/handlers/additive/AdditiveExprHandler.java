@@ -1,23 +1,20 @@
 package org.javaculator.antlr4.handlers.additive;
 
-import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IVisitorExprHandler;
-import org.javaculator.exceptions.UnknownOperatorException;
-import org.javaculator.utils.BigDecimalSupport;
+import org.javaculator.antlr4.exceptions.UnknownOperatorException;
+import org.javaculator.antlr4.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class AdditiveExprHandler implements IVisitorExprHandler<CalcParser.AddSubExprContext, CalcParser.MultiplicativeContext> {
+import static org.javaculator.antlr4.CalcParser.*;
+
+public class AdditiveExprHandler implements IVisitorExprHandler<AddSubExprContext, MultiplicativeContext> {
     public static final AdditiveExprHandler INSTANCE = new AdditiveExprHandler();
 
     @Override
-    public Optional<BigDecimal> handle(CalcParser.AddSubExprContext ctx, Function<CalcParser.MultiplicativeContext, BigDecimal> visitor) {
-        if (ctx.multiplicative() == null) {
-            return Optional.empty();
-        }
-
+    public Optional<BigDecimal> handle(AddSubExprContext ctx, Function<MultiplicativeContext, BigDecimal> visitor) {
         BigDecimal lhs = visitor.apply(ctx.multiplicative(0));
 
         for (int i = 1; i < ctx.multiplicative().size(); i++) {

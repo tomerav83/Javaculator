@@ -14,6 +14,7 @@ repositories {
 dependencies {
     antlr "org.antlr:antlr4:4.13.1"
     implementation "org.antlr:antlr4-runtime:4.13.1"
+    implementation 'org.jline:jline:3.25.0'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
@@ -35,4 +36,23 @@ generateGrammarSource {
 //sourceSets.main.java.srcDirs += 'build/generated-src/antlr/main'
 
 compileJava.dependsOn generateGrammarSource
+
+application {
+    mainClass = 'org.javaculator.Main'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'org.javaculator.Main'
+        )
+    }
+
+    // This part is needed if you want to include dependencies in your JAR
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 

@@ -1,4 +1,4 @@
-package org.javaculator.exceptions;
+package org.javaculator.antlr4.exceptions;
 
 public class InvalidCalculationException extends RuntimeException {
     public InvalidCalculationException(String template, Throwable e) {

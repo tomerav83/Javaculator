@@ -13,6 +13,6 @@ public class IdentifierHandler implements IStatefulExprHandler<CalcParser.Identi
 
     @Override
     public Optional<BigDecimal> handle(CalcParser.IdentifierContext ctx, Snapshot snapsoht) {
-        return Optional.ofNullable(ctx.ID()).map(TerminalNode::getText).map(snapsoht::get);
+        return Optional.ofNullable(getFromSnapshot(ctx, snapsoht));
     }
 }

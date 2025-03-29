@@ -1,6 +1,6 @@
-package org.javaculator.utils;
+package org.javaculator.antlr4.utils;
 
-import org.javaculator.exceptions.InvalidCalculationException;
+import org.javaculator.antlr4.exceptions.InvalidCalculationException;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

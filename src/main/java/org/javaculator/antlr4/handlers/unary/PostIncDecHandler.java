@@ -3,8 +3,8 @@ package org.javaculator.antlr4.handlers.unary;
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IStatefulExprHandler;
 import org.javaculator.antlr4.snapshot.Snapshot;
-import org.javaculator.exceptions.UnknownOperatorException;
-import org.javaculator.utils.BigDecimalSupport;
+import org.javaculator.antlr4.exceptions.UnknownOperatorException;
+import org.javaculator.antlr4.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -14,24 +14,12 @@ public class PostIncDecHandler implements IStatefulExprHandler<CalcParser.PostIn
 
     @Override
     public Optional<BigDecimal> handle(CalcParser.PostIncDecExprContext ctx, Snapshot snapshot) {
-        if (ctx.ID() == null || ctx.getChildCount() != 2) {
-            return Optional.empty();
-        }
-
-        String identifier = ctx.ID().getText();
-
-        if (snapshot.isMissingOrNull(identifier)) {
-            return Optional.empty();
-        }
-
-        BigDecimal current = snapshot.get(identifier);
+        BigDecimal current = getFromSnapshot(ctx, snapshot);
         String op = ctx.getChild(1).getText();
 
         return switch (op) {
-            case "--" -> Optional.ofNullable(
-                    snapshot.putAndGetPrevious(identifier, BigDecimalSupport.dec(current)));
-            case "++" -> Optional.ofNullable(
-                    snapshot.putAndGetPrevious(identifier, BigDecimalSupport.inc(current)));
+            case "--" -> Optional.ofNullable(putAndGetPrevious(ctx, snapshot, BigDecimalSupport.dec(current)));
+            case "++" -> Optional.ofNullable(putAndGetPrevious(ctx, snapshot, BigDecimalSupport.inc(current)));
             default ->  throw new UnknownOperatorException(op);
         };
     }

@@ -3,8 +3,8 @@ package org.javaculator.antlr4.handlers.assignment;
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IStatefulVisitorExprHandler;
 import org.javaculator.antlr4.snapshot.Snapshot;
-import org.javaculator.exceptions.UnknownOperatorException;
-import org.javaculator.utils.BigDecimalSupport;
+import org.javaculator.antlr4.exceptions.UnknownOperatorException;
+import org.javaculator.antlr4.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -14,27 +14,22 @@ public class AssignExprHandler implements IStatefulVisitorExprHandler<CalcParser
     public static final AssignExprHandler INSTANCE = new AssignExprHandler();
 
     @Override
-    public Optional<BigDecimal> handle(CalcParser.AssignExprContext ctx, Snapshot snapshot, Function<CalcParser.ExpressionContext, BigDecimal> visitor) {
-        if (ctx.ID() == null) {
-            return Optional.empty();
-        }
-
-        String identifier = ctx.ID().getText();
+    public Optional<BigDecimal> handle(CalcParser.AssignExprContext ctx,
+                                       Snapshot snapshot,
+                                       Function<CalcParser.ExpressionContext, BigDecimal> visitor) {
+        BigDecimal lhs = getFromSnapshot(ctx, snapshot);
         String op = ctx.getChild(1).getText();
 
-        BigDecimal lhs = snapshot.get(identifier);
-        BigDecimal rhs = visitor.apply(ctx.expression());
-
         BigDecimal value = switch (op) {
-            case "=" -> rhs;
-            case "+=" -> BigDecimalSupport.add(lhs, rhs, true);
-            case "-=" -> BigDecimalSupport.sub(lhs, rhs, true);
-            case "*=" -> BigDecimalSupport.multiply(lhs, rhs, true);
-            case "/=" -> BigDecimalSupport.div(lhs, rhs, true);
-            case "%=" -> BigDecimalSupport.mod(lhs, rhs, true);
+            case "=" -> visitor.apply(ctx.expression());
+            case "+=" -> BigDecimalSupport.add(lhs, visitor.apply(ctx.expression()), true);
+            case "-=" -> BigDecimalSupport.sub(lhs, visitor.apply(ctx.expression()), true);
+            case "*=" -> BigDecimalSupport.multiply(lhs, visitor.apply(ctx.expression()), true);
+            case "/=" -> BigDecimalSupport.div(lhs, visitor.apply(ctx.expression()), true);
+            case "%=" -> BigDecimalSupport.mod(lhs, visitor.apply(ctx.expression()), true);
             default ->  throw new UnknownOperatorException(op);
         };
 
-        return Optional.ofNullable(snapshot.putAndGetCurrent(identifier, value));
+        return Optional.ofNullable(putAndGetCurrent(ctx, snapshot, value));
     }
 }

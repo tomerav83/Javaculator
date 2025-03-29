@@ -1,5 +1,9 @@
 package org.javaculator.antlr4;
 
+import org.antlr.v4.runtime.InputMismatchException;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.javaculator.antlr4.exceptions.InvalidCalculationException;
+import org.javaculator.antlr4.exceptions.UnknownOperatorException;
 import org.javaculator.antlr4.handlers.*;
 import org.javaculator.antlr4.handlers.additive.AdditiveExprHandler;
 import org.javaculator.antlr4.handlers.assignment.AssignExprHandler;
@@ -19,10 +23,21 @@ import java.math.BigDecimal;
 public class Javaculator extends CalcBaseVisitor<BigDecimal> {
     private final Snapshot snapshot = new Snapshot();
 
-    public Snapshot getSnapshot() {
-        return snapshot;
+    public Snapshot addCalculationStage(CalcParser parser) {
+        try {
+            snapshot.take();
+            visit(parser.assignment());
+            return snapshot;
+        } catch (InvalidCalculationException | UnknownOperatorException e) {
+            System.out.println(e.getMessage());
+            return snapshot.rollback();
+        } catch (ParseCancellationException e) {
+            if (e.getCause() instanceof InputMismatchException mismatch) {
+                System.out.println("Invalid calculation format, offending token: " + mismatch.getOffendingToken());
+            }
+            return snapshot;
+        }
     }
-    public void clearVars() {snapshot.clear();}
 
     @Override
     public BigDecimal visitAssignExpr(CalcParser.AssignExprContext ctx) {
