@@ -4,7 +4,9 @@ grammar Calc;
 package org.javaculator.antlr4;
 }
 
-assignment: expression EOF                              #Root;
+calculate: assignmentStmt EOF;
+
+assignmentStmt: ID (ASSIGNMENT | AUGMENTED_ASSIGNMENT) expression;
 
 expression
     : ID (ASSIGNMENT | AUGMENTED_ASSIGNMENT) expression #AssignExpr

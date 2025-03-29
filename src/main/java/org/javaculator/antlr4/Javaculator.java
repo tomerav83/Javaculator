@@ -7,6 +7,7 @@ import org.javaculator.antlr4.exceptions.UnknownOperatorException;
 import org.javaculator.antlr4.handlers.*;
 import org.javaculator.antlr4.handlers.additive.AdditiveExprHandler;
 import org.javaculator.antlr4.handlers.assignment.AssignExprHandler;
+import org.javaculator.antlr4.handlers.assignment.AssignmentStmtExprHandler;
 import org.javaculator.antlr4.handlers.assignment.SingletonExprHandler;
 import org.javaculator.antlr4.handlers.literals.FloatingPointHandler;
 import org.javaculator.antlr4.handlers.literals.IdentifierHandler;
@@ -26,7 +27,7 @@ public class Javaculator extends CalcBaseVisitor<BigDecimal> {
     public Snapshot addCalculationStage(CalcParser parser) {
         try {
             snapshot.take();
-            visit(parser.assignment());
+            visit(parser.assignmentStmt());
             return snapshot;
         } catch (InvalidCalculationException | UnknownOperatorException e) {
             System.out.println(e.getMessage());
@@ -37,6 +38,11 @@ public class Javaculator extends CalcBaseVisitor<BigDecimal> {
             }
             return snapshot;
         }
+    }
+
+    @Override
+    public BigDecimal visitAssignmentStmt(CalcParser.AssignmentStmtContext ctx) {
+        return AssignmentStmtExprHandler.INSTANCE.handle(ctx, snapshot, this::visit).orElse(null);
     }
 
     @Override

@@ -38,13 +38,13 @@ generateGrammarSource {
 compileJava.dependsOn generateGrammarSource
 
 application {
-    mainClass = 'org.javaculator.Main'
+    mainClass = 'org.javaculator.Cli'
 }
 
 jar {
     manifest {
         attributes(
-                'Main-Class': 'org.javaculator.Main'
+                'Main-Class': 'org.javaculator.Cli'
         )
     }
 
