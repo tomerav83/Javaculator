@@ -1,4 +1,4 @@
-package org.javaculator.antlr4.exceptions;
+package org.javaculator.exceptions;
 
 public class InvalidCalculationImplException extends RuntimeException {
     public InvalidCalculationImplException(String impl) {

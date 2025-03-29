@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.javaculator.antlr4.snapshot.Snapshot;
+import org.javaculator.exceptions.InvalidCalculationException;
 
 import java.util.Map;
 
@@ -15,7 +16,12 @@ public class CalculationProcessor {
         CalcLexer lexer = new CalcLexer(CharStreams.fromString(input));
         CalcParser parser = new CalcParser(new CommonTokenStream(lexer));
         parser.setErrorHandler(ERROR_STRATEGY);
-        CALCULATOR.visit(parser.assignment());
+
+        try {
+            CALCULATOR.visit(parser.assignment());
+        } catch (InvalidCalculationException e) {
+            System.out.println(e.getMessage());
+        }
 
         return CALCULATOR.getSnapshot();
     }

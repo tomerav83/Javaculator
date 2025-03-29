@@ -33,6 +33,7 @@ unaryExpr
 primaryExpr
     : INT                                                #LiteralExpr
     | ID                                                 #IdentifierExpr
+    | 'null'                                               #NullExpr
     | '(' expression ')'                                 #ParenExpr
     ;
 

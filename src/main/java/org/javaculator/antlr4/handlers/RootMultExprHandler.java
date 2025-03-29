@@ -2,6 +2,7 @@ package org.javaculator.antlr4.handlers;
 
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IVisitorExprHandler;
+import org.javaculator.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -16,19 +17,19 @@ public class RootMultExprHandler implements IVisitorExprHandler<CalcParser.RootM
             return Optional.empty();
         }
 
-        BigDecimal result = visitor.apply(ctx.multiplicativeExpr(0));
+        BigDecimal lhs = visitor.apply(ctx.multiplicativeExpr(0));
 
         for (int i = 1; i < ctx.multiplicativeExpr().size(); i++) {
             BigDecimal rhs = visitor.apply(ctx.multiplicativeExpr(i));
             String op = ctx.getChild(2 * i - 1).getText(); // Operator is at odd positions.
 
-            result = switch (op) {
-                case "+" -> result.add(rhs);
-                case "-" -> result.subtract(rhs);
+            lhs = switch (op) {
+                case "+" -> BigDecimalSupport.add(lhs, rhs, false);
+                case "-" -> BigDecimalSupport.sub(lhs, rhs, false);
                 default -> throw new RuntimeException("Unknown operator: " + op);
             };
         }
 
-        return Optional.ofNullable(result);
+        return Optional.ofNullable(lhs);
     }
 }

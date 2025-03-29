@@ -3,6 +3,7 @@ package org.javaculator.antlr4.handlers;
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IStatefulVisitorExprHandler;
 import org.javaculator.antlr4.snapshot.Snapshot;
+import org.javaculator.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -31,34 +32,13 @@ public class AssignExprHandler implements IStatefulVisitorExprHandler<CalcParser
     }
 
     private BigDecimal handleAugmentedAssign(BigDecimal lhs, BigDecimal rhs, String op) {
-        if (lhs == null) {
-            return BigDecimal.ZERO;
-        }
-
         return switch (op) {
-            case "+=" -> lhs.add(rhs);
-            case "-=" -> lhs.subtract(rhs);
-            case "*=" -> lhs.multiply(rhs);
-            case "/=" -> lhs.divide(rhs, MathContext.DECIMAL128);
-            case "%=" -> calculateModulo(lhs, rhs);
+            case "+=" -> BigDecimalSupport.add(lhs, rhs, true);
+            case "-=" -> BigDecimalSupport.sub(lhs, rhs, true);
+            case "*=" -> BigDecimalSupport.multiply(lhs, rhs, true);
+            case "/=" -> BigDecimalSupport.div(lhs, rhs, true);
+            case "%=" -> BigDecimalSupport.mod(lhs, rhs, true);
             default -> throw new RuntimeException("Unknown operator: " + op);
         };
-    }
-
-    public static BigDecimal calculateModulo(BigDecimal dividend, BigDecimal divisor) {
-        // Ensure non-zero divisor
-        if (divisor.compareTo(BigDecimal.ZERO) == 0) {
-            throw new ArithmeticException("Cannot calculate modulo with zero divisor");
-        }
-
-        // Determine the scale for precision
-        int scale = Math.max(dividend.scale(), divisor.scale());
-
-        // Perform division and get remainder
-        BigDecimal quotient = dividend.divide(divisor, scale, RoundingMode.DOWN);
-        BigDecimal multiplicationResult = quotient.multiply(divisor);
-
-        // Calculate remainder
-        return dividend.subtract(multiplicationResult);
     }
 }

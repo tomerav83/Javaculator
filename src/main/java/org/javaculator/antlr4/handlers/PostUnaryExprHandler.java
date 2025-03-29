@@ -3,6 +3,7 @@ package org.javaculator.antlr4.handlers;
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IStatefulExprHandler;
 import org.javaculator.antlr4.snapshot.Snapshot;
+import org.javaculator.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -18,17 +19,19 @@ public class PostUnaryExprHandler implements IStatefulExprHandler<CalcParser.Pos
         }
 
         String identifier = ctx.ID().getText();
-        String op = ctx.getChild(1).getText();
 
         if (snapsoht.isMissingOrNull(identifier)) {
             return Optional.empty();
         }
 
+        BigDecimal current = snapsoht.get(identifier);
+        String op = ctx.getChild(1).getText();
+
         return switch (op) {
             case "--" -> Optional.ofNullable(
-                    snapsoht.putAndGetPrevious(identifier, snapsoht.get(identifier).subtract(BigDecimal.ONE)));
+                    snapsoht.putAndGetPrevious(identifier, BigDecimalSupport.dec(current)));
             case "++" -> Optional.ofNullable(
-                    snapsoht.putAndGetPrevious(identifier, snapsoht.get(identifier).add(BigDecimal.ONE)));
+                    snapsoht.putAndGetPrevious(identifier, BigDecimalSupport.inc(current)));
             default ->  throw new RuntimeException("Unknown operator: " + op);
         };
     }

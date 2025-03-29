@@ -1,4 +1,4 @@
-package org.javaculator.antlr4.exceptions;
+package org.javaculator.exceptions;
 
 public class MissingOrNullIdentifierException extends RuntimeException {
     public MissingOrNullIdentifierException(String identifier) {
