@@ -3,9 +3,11 @@ package org.javaculator.antlr4.handlers.literals;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
+import org.javaculator.antlr4.utils.RadixUtils;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Handler for integer literal expressions in the calculator's parse tree.
@@ -20,7 +22,9 @@ import java.util.Optional;
  * @see BigDecimal
  */
 public class IntegerHandler implements IExprHandler<CalcParser.IntegerContext, BigDecimal> {
+
     public static final IntegerHandler INSTANCE = new IntegerHandler();
+    private static final Set<String> TO_REPLACE = Set.of("_", "l", "L");
 
     /**
      * Processes an integer literal expression by converting the token text into a {@link BigDecimal}.
@@ -33,7 +37,7 @@ public class IntegerHandler implements IExprHandler<CalcParser.IntegerContext, B
     public BigDecimal handle(CalcParser.IntegerContext ctx) {
         return Optional.ofNullable(ctx.INT_LITERAL())
                 .map(TerminalNode::getText)
-                .map(BigDecimal::new)
+                .map(RadixUtils::fromString)
                 .orElse(null);
     }
 }

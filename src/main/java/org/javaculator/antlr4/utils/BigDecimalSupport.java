@@ -80,6 +80,18 @@ public class BigDecimalSupport {
     }
 
     /**
+     * Computes the power of the left-hand side {@link BigDecimal} by the right-hand side.
+     *
+     * @param lhs the base
+     * @param rhs the exponent
+     * @return the power of {@code lhs} by {@code rhs}
+     * @throws InvalidCalculationException if the power operation fails due to arithmetic or null issues
+     */
+    public static BigDecimal pow(BigDecimal lhs, BigDecimal rhs) {
+        return BigDecimalOperator.POW.wrapOperation(lhs, rhs);
+    }
+
+    /**
      * Increments the given {@link BigDecimal} value by one.
      *
      * @param bd the value to increment

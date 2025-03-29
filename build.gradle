@@ -37,6 +37,10 @@ generateGrammarSource {
 
 compileJava.dependsOn generateGrammarSource
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 application {
     mainClass = 'org.javaculator.Cli'
 }

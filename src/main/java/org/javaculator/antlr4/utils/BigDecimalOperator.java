@@ -23,6 +23,7 @@ public enum BigDecimalOperator {
     SUB(BigDecimal::subtract, "%s - %s"),
     MULTIPLY(BigDecimal::multiply, "%s * %s"),
     DIVIDE(BigDecimalOperator::div, "%s / %s"),
+    POW(BigDecimalOperator::pow, "%s ^ %s"),
     MOD(BigDecimalOperator::mod, "%s % %s"),
     NEGATE(BigDecimalOperator::negate, "negate(%s)"),
     INC(BigDecimalOperator::inc, "inc(%s)"),
@@ -76,6 +77,10 @@ public enum BigDecimalOperator {
 
     private static BigDecimal div(BigDecimal lhs, BigDecimal rhs) {
         return lhs.divide(rhs, MathContext.DECIMAL128);
+    }
+
+    private static BigDecimal pow(BigDecimal lhs, BigDecimal rhs) {
+        return lhs.pow(rhs.intValueExact(), MathContext.DECIMAL128);
     }
 
     private static BigDecimal mod(BigDecimal lhs, BigDecimal rhs) {

@@ -15,6 +15,10 @@ public class RollbackCache {
     private final Map<String, BigDecimal> cache = new HashMap<>();
     private final Map<String, BigDecimal> snapshot = new HashMap<>();
 
+    public Map<String, BigDecimal> get() {
+        return cache;
+    }
+
     /**
      * Clears the current cache.
      */

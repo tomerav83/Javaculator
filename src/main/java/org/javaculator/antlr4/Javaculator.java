@@ -1,5 +1,8 @@
 package org.javaculator.antlr4;
 
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.javaculator.antlr4.cache.RollbackCache;
 import org.javaculator.antlr4.exceptions.JavaculatorException;
@@ -20,6 +23,7 @@ import org.javaculator.antlr4.handlers.unary.SignedUnaryExprHandler;
 import org.javaculator.terminal.LoggerUtils;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * The {@code Javaculator} is an expression evaluator that visits parsed AST nodes
@@ -34,18 +38,32 @@ import java.math.BigDecimal;
  * evaluation with compensation/rollback behavior.</p>
  */
 public class Javaculator extends CalcBaseVisitor<BigDecimal> {
-
+    private static final BailErrorStrategy ERROR_STRATEGY = new BailErrorStrategy();
     private final RollbackCache rollbackCache = new RollbackCache();
+    private CalcParser parser;
 
+    public Map<String, BigDecimal> getCache() {
+        return rollbackCache.get();
+    }
+
+    public void clear() {
+        rollbackCache.clear();
+    }
+
+    public void prepareAndInvokeCalculation(String input) {
+        CalcLexer lexer = new CalcLexer(CharStreams.fromString(input));
+        parser = new CalcParser(new CommonTokenStream(lexer));
+        parser.setErrorHandler(ERROR_STRATEGY);
+        calculate();
+    }
     /**
      * Evaluates a calculation stage by visiting the parsed expression tree.
      * On successful evaluation, logs the updated variable state.
      * If an exception occurs, the {@link RollbackCache} is rolled back to
      * its previous state and the error is logged.
      *
-     * @param parser the parser object containing the parsed expression tree
      */
-    public void addCalculationStage(CalcParser parser) {
+    private void calculate() {
         try {
             rollbackCache.takeSnapshot();
             visit(parser.calculate());

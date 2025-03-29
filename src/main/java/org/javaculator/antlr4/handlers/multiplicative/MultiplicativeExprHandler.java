@@ -56,6 +56,7 @@ public class MultiplicativeExprHandler implements IExprHandler<CalcParser.MulDiv
             lhs = switch (op) {
                 case "*" -> BigDecimalSupport.multiply(lhs, rhs);
                 case "/" -> BigDecimalSupport.div(lhs, rhs);
+                case "^" -> BigDecimalSupport.pow(lhs, rhs);
                 case "%" -> BigDecimalSupport.mod(lhs, rhs);
                 default -> throw new UnknownOperatorException(op);
             };

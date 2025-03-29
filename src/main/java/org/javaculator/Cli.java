@@ -32,23 +32,16 @@ public class Cli {
     }
 
     private static void runLoopUntilExit(LineReader lineReader) {
-        String line;
+        String input;
         do {
-            line = lineReader.readLine("Enter calculation: ");
+            input = lineReader.readLine("Enter calculation: ");
 
-            if ("exit".equals(line)) {
+            if ("exit".equals(input)) {
                 LoggerUtils.info("Javaculator finished, thanks for playing :)");
                 break;
             }
 
-            runCalculationStage(line);
-        } while (line != null);
-    }
-
-    private static void runCalculationStage(String input) {
-        CalcLexer lexer = new CalcLexer(CharStreams.fromString(input));
-        CalcParser parser = new CalcParser(new CommonTokenStream(lexer));
-        parser.setErrorHandler(ERROR_STRATEGY);
-        CALCULATOR.addCalculationStage(parser);
+            CALCULATOR.prepareAndInvokeCalculation(input);
+        } while (input != null);
     }
 }

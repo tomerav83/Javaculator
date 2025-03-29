@@ -59,6 +59,7 @@ public class AugmentedAssignExprHandler implements IExprHandler<CalcParser.Augme
             case "-=" -> BigDecimalSupport.sub(lhs, visitor.apply(ctx.expression()));
             case "*=" -> BigDecimalSupport.multiply(lhs, visitor.apply(ctx.expression()));
             case "/=" -> BigDecimalSupport.div(lhs, visitor.apply(ctx.expression()));
+            case "^=" -> BigDecimalSupport.pow(lhs, visitor.apply(ctx.expression()));
             case "%=" -> BigDecimalSupport.mod(lhs, visitor.apply(ctx.expression()));
             default -> throw new UnknownOperatorException(op);
         };
