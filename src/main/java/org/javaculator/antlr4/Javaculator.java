@@ -1,11 +1,19 @@
 package org.javaculator.antlr4;
 
 import org.javaculator.antlr4.handlers.*;
+import org.javaculator.antlr4.handlers.additive.AdditiveExprHandler;
+import org.javaculator.antlr4.handlers.assignment.AssignExprHandler;
+import org.javaculator.antlr4.handlers.assignment.SingletonExprHandler;
+import org.javaculator.antlr4.handlers.literals.IdentifierHandler;
+import org.javaculator.antlr4.handlers.literals.IntegerHandler;
+import org.javaculator.antlr4.handlers.literals.LiteralExprHandler;
+import org.javaculator.antlr4.handlers.unary.PostIncDecHandler;
+import org.javaculator.antlr4.handlers.unary.PreIncDecHandler;
+import org.javaculator.antlr4.handlers.multiplicative.MultiplicativeExprHandler;
+import org.javaculator.antlr4.handlers.unary.SignedUnaryExprHandler;
 import org.javaculator.antlr4.snapshot.Snapshot;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Javaculator extends CalcBaseVisitor<BigDecimal> {
     private final Snapshot snapshot = new Snapshot();
@@ -15,71 +23,64 @@ public class Javaculator extends CalcBaseVisitor<BigDecimal> {
     }
     public void clearVars() {snapshot.clear();}
 
-    // assignment
-
     @Override
     public BigDecimal visitAssignExpr(CalcParser.AssignExprContext ctx) {
         return AssignExprHandler.INSTANCE.handle(ctx, snapshot, this::visit).orElse(null);
     }
 
     @Override
-    public BigDecimal visitRootAddExpr(CalcParser.RootAddExprContext ctx) {
-        return RootAddExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
-    }
-
-    // mult
-
-    @Override
-    public BigDecimal visitRootMultExpr(CalcParser.RootMultExprContext ctx) {
-        return RootMultExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
+    public BigDecimal visitSingletonExpr(CalcParser.SingletonExprContext ctx) {
+        return SingletonExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
     }
 
     @Override
-    public BigDecimal visitRootUnaryExpr(CalcParser.RootUnaryExprContext ctx) {
-        return RootUnaryExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
+    public BigDecimal visitAddSubExpr(CalcParser.AddSubExprContext ctx) {
+        return AdditiveExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
     }
 
     @Override
-    public BigDecimal visitSignedUnaryExpr(CalcParser.SignedUnaryExprContext ctx) {
+    public BigDecimal visitMulDivModExpr(CalcParser.MulDivModExprContext ctx) {
+        return MultiplicativeExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
+    }
+
+    @Override
+    public BigDecimal visitSignedExpr(CalcParser.SignedExprContext ctx) {
         return SignedUnaryExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
     }
 
     @Override
-    public BigDecimal visitPreUnaryExpr(CalcParser.PreUnaryExprContext ctx) {
-        return PreUnaryExprHandler.INSTANCE.handle(ctx, snapshot).orElse(null);
+    public BigDecimal visitPreIncDecExpr(CalcParser.PreIncDecExprContext ctx) {
+        return PreIncDecHandler.INSTANCE.handle(ctx, snapshot).orElse(null);
     }
 
     @Override
-    public BigDecimal visitPostUnaryExpr(CalcParser.PostUnaryExprContext ctx) {
-        return PostUnaryExprHandler.INSTANCE.handle(ctx, snapshot).orElse(null);
+    public BigDecimal visitPostIncDecExpr(CalcParser.PostIncDecExprContext ctx) {
+        return PostIncDecHandler.INSTANCE.handle(ctx, snapshot).orElse(null);
+    }
+
+
+    @Override
+    public BigDecimal visitLiteralsExpr(CalcParser.LiteralsExprContext ctx) {
+        return LiteralExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
     }
 
     @Override
-    public BigDecimal visitRootPrimaryExpr(CalcParser.RootPrimaryExprContext ctx) {
-        return RootPrimaryExprHandler.INSTANCE.handle(ctx)
-                .map(this::visit)
-                .orElse(null);
+    public BigDecimal visitIdentifier(CalcParser.IdentifierContext ctx) {
+        return IdentifierHandler.INSTANCE.handle(ctx, snapshot).orElse(null);
     }
 
     @Override
-    public BigDecimal visitIdentifierExpr(CalcParser.IdentifierExprContext ctx) {
-        return IdentifierExprHandler.INSTANCE.handle(ctx, snapshot).orElse(null);
-    }
-
-    @Override
-    public BigDecimal visitLiteralExpr(CalcParser.LiteralExprContext ctx) {
-        return LiteralExprHandler.INSTANCE.handle(ctx).orElse(null);
+    public BigDecimal visitInteger(CalcParser.IntegerContext ctx) {
+        return IntegerHandler.INSTANCE.handle(ctx).orElse(null);
     }
 
     @Override
     public BigDecimal visitParenExpr(CalcParser.ParenExprContext ctx) {
-        return ParenExprHandler.INSTANCE.handle(ctx)
-                .map(this::visit)
-                .orElse(null);
+        return ParenExprHandler.INSTANCE.handle(ctx, this::visit).orElse(null);
     }
 
     @Override
-    public BigDecimal visitNullExpr(CalcParser.NullExprContext ctx) {
+    public BigDecimal visitNull(CalcParser.NullContext ctx) {
         return null;
     }
 }

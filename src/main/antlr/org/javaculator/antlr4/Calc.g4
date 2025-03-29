@@ -4,37 +4,33 @@ grammar Calc;
 package org.javaculator.antlr4;
 }
 
-assignment: expression EOF                              #RootAssignExpr;
+assignment: expression EOF                              #Root;
 
 expression
     : ID (ASSIGNMENT | AUGMENTED_ASSIGNMENT) expression #AssignExpr
-    | additiveExpr                                      #RootAddExpr
+    | additive                                          #SingletonExpr
     ;
 
-// Lowest precedence for additive operators.
-additiveExpr
-    : multiplicativeExpr (('+'|'-') multiplicativeExpr)* #RootMultExpr
+additive
+    : multiplicative (('+'|'-') multiplicative)*         #AddSubExpr
     ;
 
-// Next level: multiplicative operators.
-multiplicativeExpr
-    : unaryExpr (('*'|'/'|'%') unaryExpr)*               #RootUnaryExpr
+multiplicative
+    : unary (('*'|'/'|'%') unary)*                       #MulDivModExpr
     ;
 
-// Handle unary operators.
-unaryExpr
-    : ('+'|'-') unaryExpr                                #SignedUnaryExpr
-    | ('++' | '--') ID                                   #PreUnaryExpr
-    | ID ('++' | '--')                                   #PostUnaryExpr
-    | primaryExpr                                        #RootPrimaryExpr
-    ;
-
-// Primary expressions.
-primaryExpr
-    : INT                                                #LiteralExpr
-    | ID                                                 #IdentifierExpr
-    | 'null'                                               #NullExpr
+unary
+    : ('+'|'-') unary                                    #SignedExpr
+    | ('++' | '--') ID                                   #PreIncDecExpr
+    | ID ('++' | '--')                                   #PostIncDecExpr
     | '(' expression ')'                                 #ParenExpr
+    | literals                                           #LiteralsExpr
+    ;
+
+literals
+    : INT                                                #Integer
+    | ID                                                 #Identifier
+    | 'null'                                             #Null
     ;
 
 // Lexer rules.

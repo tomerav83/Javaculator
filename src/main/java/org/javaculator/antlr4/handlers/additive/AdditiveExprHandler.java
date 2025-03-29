@@ -1,4 +1,4 @@
-package org.javaculator.antlr4.handlers;
+package org.javaculator.antlr4.handlers.additive;
 
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IVisitorExprHandler;
@@ -8,19 +8,19 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class RootMultExprHandler implements IVisitorExprHandler<CalcParser.RootMultExprContext, CalcParser.MultiplicativeExprContext> {
-    public static final RootMultExprHandler INSTANCE = new RootMultExprHandler();
+public class AdditiveExprHandler implements IVisitorExprHandler<CalcParser.AddSubExprContext, CalcParser.MultiplicativeContext> {
+    public static final AdditiveExprHandler INSTANCE = new AdditiveExprHandler();
 
     @Override
-    public Optional<BigDecimal> handle(CalcParser.RootMultExprContext ctx, Function<CalcParser.MultiplicativeExprContext, BigDecimal> visitor) {
-        if (ctx.multiplicativeExpr() == null) {
+    public Optional<BigDecimal> handle(CalcParser.AddSubExprContext ctx, Function<CalcParser.MultiplicativeContext, BigDecimal> visitor) {
+        if (ctx.multiplicative() == null) {
             return Optional.empty();
         }
 
-        BigDecimal lhs = visitor.apply(ctx.multiplicativeExpr(0));
+        BigDecimal lhs = visitor.apply(ctx.multiplicative(0));
 
-        for (int i = 1; i < ctx.multiplicativeExpr().size(); i++) {
-            BigDecimal rhs = visitor.apply(ctx.multiplicativeExpr(i));
+        for (int i = 1; i < ctx.multiplicative().size(); i++) {
+            BigDecimal rhs = visitor.apply(ctx.multiplicative(i));
             String op = ctx.getChild(2 * i - 1).getText(); // Operator is at odd positions.
 
             lhs = switch (op) {

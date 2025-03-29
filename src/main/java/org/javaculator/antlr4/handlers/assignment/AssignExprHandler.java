@@ -1,4 +1,4 @@
-package org.javaculator.antlr4.handlers;
+package org.javaculator.antlr4.handlers.assignment;
 
 import org.javaculator.antlr4.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IStatefulVisitorExprHandler;
@@ -6,9 +6,6 @@ import org.javaculator.antlr4.snapshot.Snapshot;
 import org.javaculator.utils.BigDecimalSupport;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -26,13 +23,9 @@ public class AssignExprHandler implements IStatefulVisitorExprHandler<CalcParser
 
         BigDecimal lhs = snapshot.get(identifier);
         BigDecimal rhs = visitor.apply(ctx.expression());
-        BigDecimal value = Objects.equals(op, "=") ? rhs : handleAugmentedAssign(lhs, rhs, op);
 
-        return Optional.ofNullable(snapshot.putAndGetCurrent(identifier, value));
-    }
-
-    private BigDecimal handleAugmentedAssign(BigDecimal lhs, BigDecimal rhs, String op) {
-        return switch (op) {
+        BigDecimal value = switch (op) {
+            case "=" -> rhs;
             case "+=" -> BigDecimalSupport.add(lhs, rhs, true);
             case "-=" -> BigDecimalSupport.sub(lhs, rhs, true);
             case "*=" -> BigDecimalSupport.multiply(lhs, rhs, true);
@@ -40,5 +33,7 @@ public class AssignExprHandler implements IStatefulVisitorExprHandler<CalcParser
             case "%=" -> BigDecimalSupport.mod(lhs, rhs, true);
             default -> throw new RuntimeException("Unknown operator: " + op);
         };
+
+        return Optional.ofNullable(snapshot.putAndGetCurrent(identifier, value));
     }
 }
