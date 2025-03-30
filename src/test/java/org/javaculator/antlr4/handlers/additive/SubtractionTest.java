@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class SimpleSubtractionTest {
+public class SubtractionTest {
     private final Javaculator calculator = new Javaculator();
 
     @Nested

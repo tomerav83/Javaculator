@@ -5,6 +5,7 @@ import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.cache.RollbackCache;
 import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
 import org.javaculator.antlr4.utils.BigDecimalSupport;
+import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -46,7 +47,7 @@ public class PostIncDecHandler implements IExprHandler<CalcParser.PostIncDecExpr
     @Override
     public BigDecimal handle(CalcParser.PostIncDecExprContext ctx, RollbackCache rollbackCache) {
         BigDecimal current = getFromSnapshot(ctx, rollbackCache);
-        String op = ctx.getChild(1).getText();
+        String op = ParserCtxUtils.getChild(ctx, 1);
 
         return switch (op) {
             case "--" -> putAndGetPrevious(ctx, rollbackCache, BigDecimalSupport.dec(current));

@@ -1,13 +1,13 @@
 package org.javaculator.antlr4.handlers.assignment;
 
-import org.javaculator.antlr4.gen.CalcParser;
-import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
-import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.cache.RollbackCache;
+import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
+import org.javaculator.antlr4.gen.CalcParser;
+import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.utils.BigDecimalSupport;
+import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -41,18 +41,18 @@ public class AugmentedAssignExprHandler implements IExprHandler<CalcParser.Augme
      * Finally, it updates the snapshot with the new computed value.
      * </p>
      *
-     * @param ctx      the augmented assignment expression context from the parse tree
+     * @param ctx           the augmented assignment expression context from the parse tree
      * @param rollbackCache the snapshot representing the current state of variable assignments
-     * @param visitor  a function to evaluate the right-hand side expression, returning a {@code BigDecimal}
+     * @param visitor       a function to evaluate the right-hand side expression, returning a {@code BigDecimal}
      * @return an {@link  BigDecimal} containing the updated value after applying the operation, or empty if the result is null
      * @throws UnknownOperatorException if an unsupported operator is encountered
      */
     @Override
     public BigDecimal handle(CalcParser.AugmentedAssignExprContext ctx,
-                                       RollbackCache rollbackCache,
-                                       Function<CalcParser.ExpressionContext, BigDecimal> visitor) {
+                             RollbackCache rollbackCache,
+                             Function<CalcParser.ExpressionContext, BigDecimal> visitor) {
         BigDecimal lhs = getFromSnapshot(ctx, rollbackCache);
-        String op = ctx.getChild(1).getText();
+        String op = ParserCtxUtils.getChild(ctx, 1);
 
         BigDecimal value = switch (op) {
             case "+=" -> BigDecimalSupport.add(lhs, visitor.apply(ctx.expression()));

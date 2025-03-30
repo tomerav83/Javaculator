@@ -3,6 +3,7 @@ package org.javaculator.antlr4.handlers.additive;
 import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.utils.BigDecimalSupport;
+import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -47,7 +48,7 @@ public class AdditiveExprHandler implements IExprHandler<AddSubExprContext, Mult
         for (int i = 1; i < ctx.multiplicative().size(); i++) {
             BigDecimal rhs = visitor.apply(ctx.multiplicative(i));
             // Operator is at odd positions in the parse tree children
-            String op = ctx.getChild(2 * i - 1).getText();
+            String op = ParserCtxUtils.getChild(ctx, 2 * i - 1);
 
             lhs = switch (op) {
                 case "+" -> BigDecimalSupport.add(lhs, rhs);

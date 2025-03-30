@@ -1,13 +1,13 @@
 package org.javaculator.antlr4.handlers.assignment;
 
-import org.javaculator.antlr4.gen.CalcParser;
-import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.cache.RollbackCache;
 import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
+import org.javaculator.antlr4.gen.CalcParser;
+import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
+import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -37,17 +37,17 @@ public class AssignExprHandler implements IExprHandler<CalcParser.AssignExprCont
      * and the resulting value is stored in the snapshot using a helper method
      * </p>
      *
-     * @param ctx      the assignment expression context from the parse tree
+     * @param ctx           the assignment expression context from the parse tree
      * @param rollbackCache the current snapshot of variable states
-     * @param visitor  a function to evaluate the right-hand side expression, returning a {@code BigDecimal}
+     * @param visitor       a function to evaluate the right-hand side expression, returning a {@code BigDecimal}
      * @return an {@link  BigDecimal} containing the result of the assignment, or empty if null
      * @throws UnknownOperatorException if the operator is not "="
      */
     @Override
     public BigDecimal handle(CalcParser.AssignExprContext ctx,
-                                       RollbackCache rollbackCache,
-                                       Function<CalcParser.ExpressionContext, BigDecimal> visitor) {
-        String op = ctx.getChild(1).getText();
+                             RollbackCache rollbackCache,
+                             Function<CalcParser.ExpressionContext, BigDecimal> visitor) {
+        String op = ParserCtxUtils.getChild(ctx, 1);
 
         if (!Objects.equals(op, "=")) {
             throw new UnknownOperatorException(op);

@@ -1,17 +1,24 @@
 package org.javaculator.antlr4.handlers.additive;
 
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.javaculator.antlr4.Javaculator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
+import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
+import org.javaculator.antlr4.gen.CalcParser;
+import org.javaculator.antlr4.utils.ParserCtxUtils;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class SimpleAdditionTest {
+public class AdditionTest {
     private final Javaculator calculator = new Javaculator();
 
     @Nested
