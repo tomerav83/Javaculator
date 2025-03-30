@@ -4,7 +4,6 @@ import org.javaculator.antlr4.cache.RollbackCache;
 import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
 import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
-import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -47,7 +46,7 @@ public class AssignExprHandler implements IExprHandler<CalcParser.AssignExprCont
     public BigDecimal handle(CalcParser.AssignExprContext ctx,
                              RollbackCache rollbackCache,
                              Function<CalcParser.ExpressionContext, BigDecimal> visitor) {
-        String op = ParserCtxUtils.getChild(ctx, 1);
+        String op = ctx.getChild(1).getText();
 
         if (!Objects.equals(op, "=")) {
             throw new UnknownOperatorException(op);

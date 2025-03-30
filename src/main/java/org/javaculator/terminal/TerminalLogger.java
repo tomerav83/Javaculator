@@ -1,6 +1,6 @@
 package org.javaculator.terminal;
 
-import org.jline.terminal.Terminal;
+import lombok.experimental.UtilityClass;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
 
@@ -13,10 +13,11 @@ import static org.jline.utils.AttributedStyle.DEFAULT;
  * Utility class for logging styled messages to the console using JLine.
  * Supports ANSI styling and color-coded log levels (info, error, fatal).
  */
-public class LoggerUtils {
-    private static final Terminal TERMINAL = JLineTerminal.get();
+@UtilityClass
+public class TerminalLogger {
     private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
+    private static final boolean DISABLE_LOGGING = Boolean.parseBoolean(System.getenv("DISABLE_LOGGING"));
     private static final boolean ENABLE_TIMESTAMP = true;
     private static final boolean ENABLE_EMOJIS = true;
 
@@ -79,6 +80,10 @@ public class LoggerUtils {
     }
 
     private static void log(String level, String message, int color, String emoji) {
+        if (DISABLE_LOGGING) {
+            return;
+        }
+
         StringBuilder sb = new StringBuilder();
 
         if (ENABLE_TIMESTAMP) {

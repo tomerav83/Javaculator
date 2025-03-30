@@ -5,10 +5,8 @@ import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.cache.RollbackCache;
 import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
 import org.javaculator.antlr4.utils.BigDecimalSupport;
-import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 /**
  * Handler for pre-increment and pre-decrement expressions in the calculator's parse tree.
@@ -47,7 +45,7 @@ public class PreIncDecHandler implements IExprHandler<CalcParser.PreIncDecExprCo
     @Override
     public BigDecimal handle(CalcParser.PreIncDecExprContext ctx, RollbackCache rollbackCache) {
         BigDecimal value = getFromSnapshot(ctx, rollbackCache);
-        String op = ParserCtxUtils.getChild(ctx, 0);
+        String op = ctx.getChild(0).getText();
 
         return switch (op) {
             case "--" -> putAndGetCurrent(ctx, rollbackCache, BigDecimalSupport.dec(value));

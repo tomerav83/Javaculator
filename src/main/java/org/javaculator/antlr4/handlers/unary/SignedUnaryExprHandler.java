@@ -4,10 +4,8 @@ import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.utils.BigDecimalSupport;
-import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -45,7 +43,7 @@ public class SignedUnaryExprHandler implements IExprHandler<CalcParser.SignedExp
     @Override
     public BigDecimal handle(CalcParser.SignedExprContext ctx, Function<CalcParser.UnaryContext, BigDecimal> visitor) {
         BigDecimal value = visitor.apply(ctx.unary());
-        String op = ParserCtxUtils.getChild(ctx, 0);
+        String op = ctx.getChild(0).getText();
 
         return switch (op) {
             case "-" -> BigDecimalSupport.negate(value);

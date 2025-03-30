@@ -5,7 +5,6 @@ import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
 import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.utils.BigDecimalSupport;
-import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -52,7 +51,7 @@ public class AugmentedAssignExprHandler implements IExprHandler<CalcParser.Augme
                              RollbackCache rollbackCache,
                              Function<CalcParser.ExpressionContext, BigDecimal> visitor) {
         BigDecimal lhs = getFromSnapshot(ctx, rollbackCache);
-        String op = ParserCtxUtils.getChild(ctx, 1);
+        String op = ctx.getChild(1).getText();
 
         BigDecimal value = switch (op) {
             case "+=" -> BigDecimalSupport.add(lhs, visitor.apply(ctx.expression()));

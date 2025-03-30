@@ -23,7 +23,7 @@ import org.javaculator.antlr4.handlers.unary.ParenExprHandler;
 import org.javaculator.antlr4.handlers.unary.PostIncDecHandler;
 import org.javaculator.antlr4.handlers.unary.PreIncDecHandler;
 import org.javaculator.antlr4.handlers.unary.SignedUnaryExprHandler;
-import org.javaculator.terminal.LoggerUtils;
+import org.javaculator.terminal.TerminalLogger;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -70,14 +70,14 @@ public class Javaculator extends CalcBaseVisitor<BigDecimal> {
         try {
             rollbackCache.takeSnapshot();
             visit(parser.calculate());
-            LoggerUtils.info("After calculation: %s".formatted(rollbackCache));
+            TerminalLogger.info("After calculation: %s".formatted(rollbackCache));
         } catch (JavaculatorException e) {
             rollbackCache.rollback();
-            LoggerUtils.error("Encountered exception: %s".formatted(e.getMessage()));
-            LoggerUtils.warn("After calculation: %s".formatted(rollbackCache));
+            TerminalLogger.error("Encountered exception: %s".formatted(e.getMessage()));
+            TerminalLogger.warn("After calculation: %s".formatted(rollbackCache));
         } catch (ParseCancellationException e) {
-            LoggerUtils.fatal("Encountered exception: %s".formatted(e.getMessage()));
-            LoggerUtils.warn("After calculation: %s".formatted(rollbackCache));
+            TerminalLogger.fatal("Encountered exception: %s".formatted(e.getMessage()));
+            TerminalLogger.warn("After calculation: %s".formatted(rollbackCache));
         }
     }
 

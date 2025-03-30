@@ -42,9 +42,9 @@ public class JLineTerminal {
      * @return the same terminal instance after printing
      */
     private static Terminal hello(Terminal terminal) {
-        LoggerUtils.fromAnsi("Hello ").print(terminal);
-        LoggerUtils.foreground("Taboola :)", AttributedStyle.BLUE).print(terminal);
-        LoggerUtils.fromAnsi(", ready for some math?").println(terminal);
+        TerminalLogger.fromAnsi("Hello ").print(terminal);
+        TerminalLogger.foreground("Taboola :)", AttributedStyle.BLUE).print(terminal);
+        TerminalLogger.fromAnsi(", ready for some math?").println(terminal);
         return terminal;
     }
 }

@@ -1,13 +1,9 @@
 package org.javaculator;
 
 import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.javaculator.antlr4.gen.CalcLexer;
-import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.Javaculator;
 import org.javaculator.terminal.JLineTerminal;
-import org.javaculator.terminal.LoggerUtils;
+import org.javaculator.terminal.TerminalLogger;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.DefaultParser;
@@ -26,7 +22,7 @@ public class Cli {
 
             runLoopUntilExit(lineReader);
         } catch (Exception e) {
-            LoggerUtils.fatal(e.getMessage());
+            TerminalLogger.fatal(e.getMessage());
             System.exit(-1);
         }
     }
@@ -37,7 +33,7 @@ public class Cli {
             input = lineReader.readLine("Enter calculation: ");
 
             if ("exit".equals(input)) {
-                LoggerUtils.info("Javaculator finished, thanks for playing :)");
+                TerminalLogger.info("Javaculator finished, thanks for playing :)");
                 break;
             }
 

@@ -4,10 +4,8 @@ import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.exceptions.impl.UnknownOperatorException;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.utils.BigDecimalSupport;
-import org.javaculator.antlr4.utils.ParserCtxUtils;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -52,7 +50,7 @@ public class MultiplicativeExprHandler implements IExprHandler<CalcParser.MulDiv
         for (int i = 1; i < ctx.unary().size(); i++) {
             BigDecimal rhs = visitor.apply(ctx.unary(i));
             // The operator is located at the odd positions in the parse tree children.
-            String op = ParserCtxUtils.getChild(ctx, 2 * i - 1);
+            String op = ctx.getChild(2 * i - 1).getText();
 
             lhs = switch (op) {
                 case "*" -> BigDecimalSupport.multiply(lhs, rhs);
