@@ -45,10 +45,17 @@ public class Javaculator extends CalcBaseVisitor<BigDecimal> {
     private final RollbackCache rollbackCache = new RollbackCache();
     private CalcParser parser;
 
+    /**
+     * get cash
+     * @return state of the current variables
+     */
     public Map<String, BigDecimal> getCache() {
         return rollbackCache.get();
     }
 
+    /**
+     * clear cash
+     */
     public void clear() {
         rollbackCache.clear();
     }

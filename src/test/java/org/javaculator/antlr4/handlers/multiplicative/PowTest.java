@@ -23,16 +23,15 @@ public class PowTest {
 
         @ParameterizedTest
         @CsvSource({
-                // Format: expression, variable, expectedValue
                 "x=2^3, x, 8",
                 "x=+2^+3, x, 8",
                 "x=-2^+3, x, -8",
                 "x=2^-3, x, 0.125",
-                "x=2^3^2, x, 64",   // left-associative: (2^3)^2 = 8^2 = 64
-                "x=1_0^2, x, 100",  // "1_0" represents 10, so 10^2 = 100
-                "x=0x2^2, x, 4",    // hexadecimal 0x2 (2) ^ 2 = 4
-                "x=01^2, x, 1",     // octal: 01 represents 1, so 1^2 = 1
-                "x=0b10^0b11, x, 8" // binary: 0b10 (2) ^ 0b11 (3) = 8
+                "x=2^3^2, x, 64",
+                "x=1_0^2, x, 100",
+                "x=0x2^2, x, 4",
+                "x=01^2, x, 1",
+                "x=0b10^0b11, x, 8"
         })
         public void testValidPowerOperations(String input, String key, BigDecimal expected) {
             calculator.prepareAndInvokeCalculation(input);
@@ -41,13 +40,53 @@ public class PowTest {
 
         @ParameterizedTest
         @CsvSource({
-                // Format: expression, variable
-                "x=2^, x",      // Missing right-hand operand.
-                "x=^3, x",      // Missing left-hand operand.
-                "x=2^^3, x",    // Consecutive '^' operators produce an empty operand.
-                "x=2^ , x"      // Trailing '^' with whitespace yields an empty operand.
+                "x=2^, x",
+                "x=^3, x",
+                "x=2^^3, x",
+                "x=2^ , x"
         })
         public void testInvalidPowerOperations(String input, String key) {
+            calculator.prepareAndInvokeCalculation(input);
+            assertNull(calculator.getCache().get(key));
+        }
+    }
+
+    @Nested
+    class FloatLiterals {
+        @BeforeEach
+        void init() {
+            calculator.clear();
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "x=2.0^3.0, x, 8.000",
+                "x=+2.0^+3.0, x, 8.000",
+                "x=-2.0^+3.0, x, -8.000",
+                "x=2.0^3.0^2.0, x, 64.000000",
+                "x=1_0.0^2.0, x, 100.00",
+                "x=0x1.8p10^2.0, x, 2359296.00",
+                "x=.5^2.0, x, 0.25",
+                "x=1.^2.0, x, 1"
+        })
+        public void testValidFloatPowerOperations(String input, String key, BigDecimal expected) {
+            calculator.prepareAndInvokeCalculation(input);
+            assertEquals(expected, calculator.getCache().get(key));
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "x=2.0^, x",
+                "x=^3.0, x",
+                "x=2.0^^3.0, x",
+                "x=2.0^*3.0, x",
+                "x=2.0^ , x",
+                "x=2_.0^3.0, x",
+                "x=2._0^3.0, x",
+                "x=2.0e^3.0, x",
+                "x=0x1.8^3.0, x"
+        })
+        public void testInvalidFloatPowerOperations(String input, String key) {
             calculator.prepareAndInvokeCalculation(input);
             assertNull(calculator.getCache().get(key));
         }

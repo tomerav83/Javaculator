@@ -66,23 +66,25 @@ fragment BIN_INT_LITERAL
     ;
 
 fragment DEC_FLOAT_LITERAL
-   :   (DIGITS? '.' DIGITS EXPONENT?
-   | DIGITS '.' DIGITS? EXPONENT?
-   | DIGITS EXPONENT)
-   ( 'f' | 'F' | 'd' | 'D' )?
-   ;
-
-fragment HEX_FLOAT_LITERAL
-    :   '0' [xX] (
-            HEX_DIGITS ('.' HEX_DIGITS?)?    // Case A and B: numeral with optional dot and fractional part
-          |
-            '.' HEX_DIGITS                  // Case C: dot followed by numeral
-        )
-        [pP] [+-]? DIGITS                    // The exponent part (binary exponent) is required
-        ( 'f' | 'F' | 'd' | 'D' )?
+    : DIGITS '.' DIGITS? EXPONENT? [fFdD]?
+    | '.' DIGITS EXPONENT? [fFdD]?
+    | DIGITS EXPONENT [fFdD]?
+    | DIGITS [fFdD]
     ;
 
+fragment HEX_FLOAT_LITERAL
+    : HEX_SIGNI BIN_EXPONENT [fFdD]?
+    ;
+
+fragment HEX_SIGNI
+    : HEX_NUMBER '.'?
+    | '0' [xX] HEX_DIGITS? '.' HEX_DIGITS
+    ;
+fragment HEX_NUMBER
+    : '0' [xX] HEX_DIGITS
+    ;
 fragment EXPONENT:   [eE] [+-]? DIGITS;
+fragment BIN_EXPONENT:   [pP] [+-]? DIGITS;
 fragment DIGITS: DIGIT (UNDERSCORE? DIGIT)*;
 fragment HEX_DIGITS: HEX_DIGIT (UNDERSCORE? HEX_DIGIT)*;
 fragment DIGIT:   [0-9];

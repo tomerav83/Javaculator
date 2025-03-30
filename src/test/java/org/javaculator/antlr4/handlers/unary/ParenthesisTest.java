@@ -8,7 +8,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ParenthesisTest {
     private final Javaculator calculator = new Javaculator();
@@ -22,7 +23,6 @@ public class ParenthesisTest {
 
         @ParameterizedTest
         @CsvSource({
-                // Format: expression, variable, expectedValue
                 "x=(1), x, 1",
                 "x=( 1 ), x, 1",
                 "x=((1)), x, 1",
@@ -45,14 +45,50 @@ public class ParenthesisTest {
 
         @ParameterizedTest
         @CsvSource({
-                // Format: expression, variable
-                "x=1), x",           // Missing opening parenthesis.
-                "x=(1, x",           // Missing closing parenthesis.
-                "x=(), x",           // Empty parentheses.
-                "x=(+), x",          // Invalid literal inside parentheses.
-                "x=(1+), x",         // Trailing operator.
-                "x=(1+(2), x",       // Unbalanced parentheses.
-                "x=( ( ) ), x"       // Inner parentheses empty.
+                "x=1), x",
+                "x=(1, x",
+                "x=(), x",
+                "x=(+), x",
+                "x=(1+), x",
+                "x=(1+(2), x",
+                "x=( ( ) ), x"
+        })
+        public void testInvalidParenthesizedExpressions(String input, String key) {
+            calculator.prepareAndInvokeCalculation(input);
+            assertNull(calculator.getCache().get(key));
+        }
+    }
+
+    @Nested
+    class ParenthesizedExpressions {
+        @BeforeEach
+        void init() {
+            calculator.clear();
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "x=(1.0), x, 1.0",
+                "x=(1.0+2.0), x, 3.0",
+                "x=((1.0)), x, 1.0",
+                "x=((1.0+2.0)+3.0), x, 6.0",
+                "x=(0x1.8p10), x, 1536.0",
+                "x=((.5)), x, 0.5",
+                "x=(1.0+(2.0+3.0)), x, 6.0"
+        })
+        public void testValidParenthesizedExpressions(String input, String key, BigDecimal expected) {
+            calculator.prepareAndInvokeCalculation(input);
+            assertEquals(expected, calculator.getCache().get(key));
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "x=1.0), x",
+                "x=(1.0, x",
+                "x=(), x",
+                "x=(1.0+), x",
+                "x=((1.0+2.0), x",
+                "x=(+), x"
         })
         public void testInvalidParenthesizedExpressions(String input, String key) {
             calculator.prepareAndInvokeCalculation(input);

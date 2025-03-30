@@ -1,9 +1,11 @@
 package org.javaculator.antlr4.utils;
 
+import lombok.experimental.UtilityClass;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 
+@UtilityClass
 public class RadixUtils {
     public static BigDecimal fromFPString(String literal) {
         literal = trimFPLiteral(literal);

@@ -1,10 +1,10 @@
 package org.javaculator.antlr4.utils;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
 import org.javaculator.antlr4.exceptions.impl.InvalidCalculationException;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.function.BiFunction;
 
 /**
@@ -80,7 +80,7 @@ public enum BigDecimalOperator {
     }
 
     private static BigDecimal pow(BigDecimal lhs, BigDecimal rhs) {
-        return lhs.pow(rhs.intValueExact(), MathContext.DECIMAL128);
+        return BigDecimalMath.pow(lhs, rhs, MathContext.DECIMAL128);
     }
 
     private static BigDecimal mod(BigDecimal lhs, BigDecimal rhs) {
@@ -88,9 +88,6 @@ public enum BigDecimalOperator {
             throw new ArithmeticException("Cannot calculate modulo with zero divisor");
         }
 
-        int scale = Math.max(lhs.scale(), rhs.scale());
-        BigDecimal quotient = lhs.divide(rhs, scale, RoundingMode.DOWN);
-        BigDecimal multiply = quotient.multiply(rhs);
-        return lhs.subtract(multiply);
+        return lhs.divideAndRemainder(rhs)[1];
     }
 }

@@ -1,11 +1,10 @@
 package org.javaculator.antlr4.handlers.literals;
 
+import org.javaculator.antlr4.cache.RollbackCache;
 import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
-import org.javaculator.antlr4.cache.RollbackCache;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 /**
  * Handler for identifier expressions in the calculator's parse tree.
@@ -29,10 +28,10 @@ public class IdentifierHandler implements IExprHandler<CalcParser.IdentifierCont
      * {@code  IExprHandler#getFromSnapshot(ParserRuleContext, Snapshot)} to obtain the associated value.
      * </p>
      *
-     * @param ctx      the identifier context from the parse tree
+     * @param ctx           the identifier context from the parse tree
      * @param rollbackCache the snapshot representing the current variable state
      * @return an {@link  BigDecimal} containing the value associated with the identifier,
-     *         or null if the value is {@code null}
+     * or null if the value is {@code null}
      */
     @Override
     public BigDecimal handle(CalcParser.IdentifierContext ctx, RollbackCache rollbackCache) {
