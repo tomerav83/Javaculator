@@ -1,7 +1,7 @@
 package org.javaculator.antlr4.handlers.literals;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.javaculator.antlr4.CalcParser;
+import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.utils.RadixUtils;
 

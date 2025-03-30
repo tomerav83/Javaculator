@@ -1,7 +1,7 @@
 grammar Calc;
 
 @header {
-package org.javaculator.antlr4;
+package org.javaculator.antlr4.gen;
 }
 
 calculate: expression EOF                               #Root;

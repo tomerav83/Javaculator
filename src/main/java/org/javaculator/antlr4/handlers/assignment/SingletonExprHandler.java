@@ -1,6 +1,6 @@
 package org.javaculator.antlr4.handlers.assignment;
 
-import org.javaculator.antlr4.CalcParser;
+import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 
 import java.math.BigDecimal;

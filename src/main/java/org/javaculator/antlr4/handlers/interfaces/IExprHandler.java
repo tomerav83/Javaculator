@@ -1,7 +1,7 @@
 package org.javaculator.antlr4.handlers.interfaces;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.javaculator.antlr4.CalcParser;
+import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.exceptions.impl.MissingOrNullIdentifierException;
 import org.javaculator.antlr4.cache.RollbackCache;
 

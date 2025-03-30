@@ -1,6 +1,6 @@
 package org.javaculator.antlr4.handlers.literals;
 
-import org.javaculator.antlr4.CalcParser;
+import org.javaculator.antlr4.gen.CalcParser;
 import org.javaculator.antlr4.handlers.interfaces.IExprHandler;
 import org.javaculator.antlr4.cache.RollbackCache;
 

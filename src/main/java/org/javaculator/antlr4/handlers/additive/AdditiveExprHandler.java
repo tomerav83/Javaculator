@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static org.javaculator.antlr4.CalcParser.*;
+import static org.javaculator.antlr4.gen.CalcParser.*;
 
 /**
  * Handler for additive expressions (+/-) in the calculator's abstract syntax tree.

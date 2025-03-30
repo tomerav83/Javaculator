@@ -24,7 +24,7 @@ public enum BigDecimalOperator {
     MULTIPLY(BigDecimal::multiply, "%s * %s"),
     DIVIDE(BigDecimalOperator::div, "%s / %s"),
     POW(BigDecimalOperator::pow, "%s ^ %s"),
-    MOD(BigDecimalOperator::mod, "%s % %s"),
+    MOD(BigDecimalOperator::mod, "%s modulu %s"),
     NEGATE(BigDecimalOperator::negate, "negate(%s)"),
     INC(BigDecimalOperator::inc, "inc(%s)"),
     DEC(BigDecimalOperator::dec, "dec(%s)");
