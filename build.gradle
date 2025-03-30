@@ -1,6 +1,9 @@
 plugins {
     id 'java'
     id 'application'
+    id 'jacoco'
+    id 'antlr'
+    id("com.diffplug.spotless") version "7.0.2"
 }
 
 group = 'org.javaculator'
@@ -10,10 +13,67 @@ repositories {
 }
 
 dependencies {
+    antlr "org.antlr:antlr4:4.13.1"
+    implementation "org.antlr:antlr4-runtime:4.13.1"
+    implementation 'org.jline:jline:3.25.0'
+    implementation("ch.obermuhlner:big-math:2.3.2")
+
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.26'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+    testImplementation 'org.mockito:mockito-core:5.0.0'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+    environment "DISABLE_LOGGING", "true"
 }
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['org/javaculator/antlr4/gen/**',
+                                        'org/javaculator/antlr4/handlers/interfaces/**',
+                                        'org/javaculator/terminal/**',
+                                        'org/javaculator/Cli**'])
+        }))
+    }
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-visitor", "-long-messages"]
+}
+
+compileJava.dependsOn generateGrammarSource
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainClass = 'org.javaculator.Cli'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'org.javaculator.Cli'
+        )
+    }
+
+    // This part is needed if you want to include dependencies in your JAR
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
