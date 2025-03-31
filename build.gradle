@@ -52,8 +52,6 @@ generateGrammarSource {
     arguments += ["-visitor", "-long-messages"]
 }
 
-compileJava.dependsOn generateGrammarSource
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }

@@ -1,6 +1,6 @@
 package org.javaculator.shuntified.lexer.impl;
 
-import org.javaculator.shuntified.tkn.impl.ConstantToken;
+import org.javaculator.shuntified.token.impl.ConstantToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
