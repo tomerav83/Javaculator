@@ -3,8 +3,40 @@ package org.javaculator.shuntified.pattern;
 import java.util.regex.Pattern;
 
 public class Patterns {
+    public static final Pattern PRE_DEC =
+            Pattern.compile("(?<!\\w)--\\s*([A-Za-z_][A-Za-z0-9_]*)");
+    public static final Pattern PRE_INC =
+            Pattern.compile("(?<!\\w)\\+\\+\\s*([A-Za-z_][A-Za-z0-9_]*)");
+    public static final Pattern POST_DEC =
+            Pattern.compile("([A-Za-z_][A-Za-z0-9_]*)\\s*--");
+    public static final Pattern POST_INC =
+            Pattern.compile("([A-Za-z_][A-Za-z0-9_]*)\\s*\\+\\+");
+    public static final Pattern NEGATE = Pattern.compile("(?<!(\\d|\\)))-");
+
+    public static final Pattern POST_INC_REPLACEABLE =
+            Pattern.compile("postinc\\(([A-Za-z_][A-Za-z0-9_]*)\\)");
+    public static final Pattern POST_DEC_REPLACEABLE =
+            Pattern.compile("postdec\\(([A-Za-z_][A-Za-z0-9_]*)\\)");
+    public static final Pattern PRE_INC_REPLACEABLE =
+            Pattern.compile("preinc\\(([A-Za-z_][A-Za-z0-9_]*)\\)");
+    public static final Pattern PRE_DEC_REPLACEABLE =
+            Pattern.compile("predec\\(([A-Za-z_][A-Za-z0-9_]*)\\)");
+    public static final Pattern NEGATE_REPLACEABLE =
+            Pattern.compile("−");
+
+    public static final Pattern ADD = Pattern.compile("\\+");
+    public static final Pattern SUB = Pattern.compile("-");
+    public static final Pattern MULTIPLY = Pattern.compile("\\*");
+    public static final Pattern DIV = Pattern.compile("/");
+    public static final Pattern MOD = Pattern.compile("%");
+    public static final Pattern ASSIGN = Pattern.compile("=");
+
     public static final Pattern VARIABLES =
             Pattern.compile("(?<!\\d)\\b[a-zA-Z_$][a-zA-Z0-9_$]*\\b");
+
+    public static final Pattern ASSIGNMENT_PATTERN = Pattern.compile(
+            "(?<!\\d)\\b([a-zA-Z_$][a-zA-Z0-9_$]*)\\b\\s*(=|\\+=|-=|\\*=|/=)"
+    );
 
     public static final Pattern NUMBERS = Pattern.compile(
             "(?:" +

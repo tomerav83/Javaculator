@@ -1,7 +1,7 @@
 package org.javaculator.shuntified.models.op;
 
 import lombok.Getter;
-import org.javaculator.shuntified.models.tkn.impl.OperatorTkn;
+import org.javaculator.shuntified.models.tkn.impl.op.OpTkn;
 
 @Getter
 public abstract class Op {
@@ -11,5 +11,9 @@ public abstract class Op {
         this.symbol = symbol;
     }
 
-    public abstract OperatorTkn getToken();
+    public int getLength() {
+        return symbol.length();
+    }
+
+    public abstract OpTkn getToken();
 }

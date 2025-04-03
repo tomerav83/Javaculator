@@ -1,12 +1,15 @@
 package org.javaculator.shuntified.lexer;
 
-import org.javaculator.shuntified.models.op.Op;
-import org.javaculator.shuntified.models.op.Operators;
-import org.javaculator.shuntified.models.tkn.Brackets;
-import org.javaculator.shuntified.models.tkn.Tkn;
 import org.javaculator.shuntified.models.tkn.impl.BracketTkn;
 import org.javaculator.shuntified.models.tkn.impl.ConstantTkn;
 import org.javaculator.shuntified.models.tkn.impl.VariableTkn;
+import org.javaculator.shuntified.models2.bracket.BracketToken;
+import org.javaculator.shuntified.models2.bracket.Brackets;
+import org.javaculator.shuntified.models2.op.Operator;
+import org.javaculator.shuntified.models2.op.Operators;
+import org.javaculator.shuntified.models2.Token;
+import org.javaculator.shuntified.models2.val.ValueToken;
+import org.javaculator.shuntified.models2.vars.VariableToken;
 import org.javaculator.shuntified.utils.InputPreprocessor;
 import org.javaculator.shuntified.pattern.collectors.impl.NumbersCollector;
 import org.javaculator.shuntified.pattern.collectors.impl.VariableCollector;
@@ -20,53 +23,54 @@ public class Lexified {
     private final List<String> nums;
 
     public Lexified(String input) {
+        this.vars = VariableCollector.INSTANCE.collect(input);
+        this.nums = NumbersCollector.INSTANCE.collect(input);
         this.input = InputPreprocessor.preprocess(input);
-        this.vars = VariableCollector.INSTANCE.collect(this.input);
-        this.nums = NumbersCollector.INSTANCE.collect(this.input);
     }
 
-    public List<Tkn> tokenize() {
+    public List<Token> tokenize() {
         int position = 0;
-        List<Tkn> tokens = new ArrayList<>();
+        List<Token> tokens = new ArrayList<>();
 
         while (position < input.length()) {
-            Tkn token = readToken(position);
-            tokens.add(token);
-            position += token.getOriginalRep().length();
+            position += readToken(position, tokens);
         }
 
         return tokens;
     }
 
-    private Tkn readToken(int start) {
-        // Detect operators
-        for (Op operator: Operators.get()) {
-            if (input.startsWith(operator.getSymbol(), start)) {
-                return operator.getToken();
+    private Integer readToken(int start, List<Token> tokens) {
+        for (Operator operator : Operators.get()) {
+            Integer size = operator.attemptToMatchAndRetrieve(input, start);
+
+            if (size != null) {
+                tokens.add(operator);
+                return size;
             }
         }
-        // Detect variables
+
         for (String variable : vars) {
             if (input.startsWith(variable, start)) {
-                return new VariableTkn(variable);
+                tokens.add(new VariableToken(variable));
+                return variable.length();
             }
         }
 
-        // Detect brackets
-        for (BracketTkn bracket : Brackets.get()) {
-            if (input.startsWith(bracket.getOriginalRep(), start)) {
-                return bracket;
+        for (BracketToken bracketToken : Brackets.get()) {
+            if (input.startsWith(bracketToken.getSign(), start)) {
+                tokens.add(bracketToken);
+                return bracketToken.getSign().length();
             }
         }
-        // Detect numbers
+
         for (String num : nums) {
             if (input.startsWith(num, start)) {
-                return new ConstantTkn(num);
+                tokens.add(new ValueToken(num));
+                return num.length();
             }
         }
 
-        // No match found
-        throw new RuntimeException("couldn't match any token for input=%s at=%s".formatted(input, start));
+       throw new RuntimeException("couldn't match any token for input=%s at=%s".formatted(input, start));
     }
 
 }

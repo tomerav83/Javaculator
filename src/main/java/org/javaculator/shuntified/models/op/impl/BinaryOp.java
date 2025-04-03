@@ -2,8 +2,8 @@ package org.javaculator.shuntified.models.op.impl;
 
 import lombok.Getter;
 import org.javaculator.shuntified.models.op.Op;
-import org.javaculator.shuntified.models.tkn.impl.BinaryOperatorTkn;
-import org.javaculator.shuntified.models.tkn.impl.OperatorTkn;
+import org.javaculator.shuntified.models.tkn.impl.op.BinaryOpTkn;
+import org.javaculator.shuntified.models.tkn.impl.op.OpTkn;
 
 import java.util.function.DoubleBinaryOperator;
 
@@ -23,7 +23,7 @@ public class BinaryOp extends Op {
 
 
     @Override
-    public OperatorTkn getToken() {
-        return new BinaryOperatorTkn(getSymbol(), this);
+    public OpTkn getToken() {
+        return new BinaryOpTkn(getSymbol(), this);
     }
 }

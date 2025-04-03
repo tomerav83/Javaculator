@@ -4,6 +4,8 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStyle;
 
+import java.util.regex.Pattern;
+
 /**
  * Utility class for initializing and accessing a shared JLine {@link Terminal} instance
  * with color support enabled. Also prints a welcome message during initialization.
