@@ -1,11 +1,12 @@
 package org.javaculator.shuntified.evaluvator;
 
 import org.javaculator.shuntified.cache.RollbackCache;
-import org.javaculator.shuntified.models2.Token;
-import org.javaculator.shuntified.models2.op.impl.BinaryOp;
-import org.javaculator.shuntified.models2.op.impl.UnaryOperator;
-import org.javaculator.shuntified.models2.val.ValueToken;
-import org.javaculator.shuntified.models2.vars.VariableToken;
+import org.javaculator.shuntified.models.Token;
+import org.javaculator.shuntified.models.operator.impl.AssignOp;
+import org.javaculator.shuntified.models.operator.impl.BinaryOp;
+import org.javaculator.shuntified.models.operator.impl.UnaryOp;
+import org.javaculator.shuntified.models.literal.LiteralToken;
+import org.javaculator.shuntified.models.variable.VariableToken;
 
 import java.util.List;
 import java.util.Map;
@@ -23,18 +24,19 @@ public class DoctorEvaluator {
 
         // Create stack to hold intermediary values
         Stack<Double> values = new Stack<>();
-        Stack<VariableToken> vars = new Stack<>();
 
         // For each RPN token
         for (Token token : equation) {
             if (token instanceof BinaryOp binaryOp) { // Binary ops
-                evaluateBinaryOperator(binaryOp, vars, values);
-            } else if (token instanceof UnaryOperator unaryOperator) { // Unary ops
-                evaluateUnaryOperator(unaryOperator, values);
-            } else if (token instanceof ValueToken constantTkn) { // Constant
+                evaluateBinaryOperator(binaryOp, values);
+            } else if (token instanceof UnaryOp unaryOp) { // Unary ops
+                evaluateUnaryOperator(unaryOp, values);
+            } else if (token instanceof LiteralToken constantTkn) { // Constant
                 evaluateConstantToken(constantTkn, values);
             } else if (token instanceof VariableToken variableTkn) { // Variable
-                evaluateVariableToken(variableTkn, vars, values);
+                evaluateVariableToken(variableTkn, values);
+            } else if (token instanceof AssignOp assignOp) {
+                evaluateAssignOperator(assignOp, values);
             } else {
                 throw new RuntimeException("Equasion could not be calculated: ");
             }
@@ -43,21 +45,38 @@ public class DoctorEvaluator {
        System.out.println(cache.get());
     }
 
+    private void evaluateAssignOperator(AssignOp assignOp, Stack<Double> values) {
+        if (values.isEmpty()) {
+            throw new RuntimeException("Invalid assignment operation, empty rhs portion");
+        }
+
+        String variable = assignOp.getTargetVariable();
+
+        Double result = switch (assignOp.getSign()) {
+            case "=" -> cache.putAndGetCurrent(variable, values.pop());
+            case "+=" -> cache.putAndGetCurrent(variable, cache.get(variable) + values.pop());
+            case "-=" -> cache.putAndGetCurrent(variable, cache.get(variable) - values.pop());
+            case "*=" -> cache.putAndGetCurrent(variable, cache.get(variable) * values.pop());
+            case "/=" -> cache.putAndGetCurrent(variable, cache.get(variable) / values.pop());
+            case "%=" -> cache.putAndGetCurrent(variable, cache.get(variable) % values.pop());
+            default -> throw new RuntimeException("un ; assignment operation");
+        };
+
+        values.push(result);
+    }
+
     /**
      * Evaluates a binary operator token.
      * @param token         The current token being evaluated.
      * @param values        The current stack of intermediary values.
      */
-    protected void evaluateBinaryOperator(BinaryOp token,
-                                          Stack<VariableToken> vars,
-                                          Stack<Double> values) {
+    protected void evaluateBinaryOperator(BinaryOp token, Stack<Double> values) {
         Double result = switch (token.getSign()) {
             case "+" -> handleBinaryCalculation(values, "+", Double::sum);
             case "-" -> handleBinaryCalculation(values, "-", (o1, o2) -> o1 - o2);
             case "*" -> handleBinaryCalculation(values, "*", (o1, o2) -> o1 * o2);
             case "/" -> handleBinaryCalculation(values, "/", (o1, o2) -> o1 / o2);
             case "%" -> handleBinaryCalculation(values, "%", (o1, o2) -> o1 % o2);
-            case "=" -> cache.putAndGetCurrent(vars.pop().getSign(), values.pop());
             default -> throw new RuntimeException("unhandled operation: " + token.getSign());
         };
 
@@ -81,7 +100,7 @@ public class DoctorEvaluator {
      * @param token         The current token being evaluated.
      * @param values        The current stack of intermediary values.
      */
-    protected void evaluateUnaryOperator(UnaryOperator token,
+    protected void evaluateUnaryOperator(UnaryOp token,
                                          Stack<Double> values) {
         // Check operands exist
         if (values.isEmpty()) {
@@ -124,7 +143,7 @@ public class DoctorEvaluator {
      * @param token         The current token being evaluated.
      * @param values        The current stack of intermediary values.
      */
-    protected void evaluateConstantToken(ValueToken token, Stack<Double> values) {
+    protected void evaluateConstantToken(LiteralToken token, Stack<Double> values) {
         // Push immediately to output
         values.push(token.getValue());
     }
@@ -134,15 +153,9 @@ public class DoctorEvaluator {
      * @param token         The current token being evaluated.
      * @param values        The current stack of intermediary values.
      */
-    protected void evaluateVariableToken(VariableToken token,
-                                         Stack<VariableToken> vars,
-                                         Stack<Double> values) {
+    protected void evaluateVariableToken(VariableToken token, Stack<Double> values) {
         // Get actual value and push to output
-        if (!cache.get().containsKey(token.getSign())) {
-            vars.push(token);
-        } else {
-            values.push(cache.get(token.getSign()));
-        }
+        values.push(cache.get(token.getSign()));
     }
 
     /**

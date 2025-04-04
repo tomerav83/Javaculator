@@ -1,51 +1,65 @@
 package org.javaculator.shuntified.parser;
 
-import org.javaculator.shuntified.models2.Token;
-import org.javaculator.shuntified.models2.TokenUtils;
-import org.javaculator.shuntified.models2.bracket.BracketToken;
-import org.javaculator.shuntified.models2.op.impl.BinaryOp;
-import org.javaculator.shuntified.models2.op.impl.UnaryOperator;
+import org.javaculator.shuntified.models.Token;
+import org.javaculator.shuntified.models.TokenUtils;
+import org.javaculator.shuntified.models.bracket.BracketToken;
+import org.javaculator.shuntified.models.operator.impl.AssignOp;
+import org.javaculator.shuntified.models.operator.impl.BinaryOp;
+import org.javaculator.shuntified.models.operator.impl.UnaryOp;
+import org.javaculator.shuntified.models.variable.VariableToken;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 public class Parserfire {
     public static List<Token> parse(List<Token> equation) {
-        List<Token> outputRPN = new ArrayList<>(); // Output RPN
+        Stack<Token> outputRPN = new Stack<>(); // Output RPN
         Stack<Token> operatorStack = new Stack<>();    // Used to temporarily hold operators
 
         // For each token in the equation
         for (Token token: equation) {
             switch (TokenUtils.getRpnOperationIndex(token)) {
-                case 1 ->  processValue(token, outputRPN, operatorStack);
+                case 1 ->  processValueOrVariable(token, outputRPN, operatorStack);
                 case 2 ->  processBinaryOperator(token.castTo(BinaryOp.class), outputRPN, operatorStack);
-                case 3 ->  processUnary(token.castTo(UnaryOperator.class), operatorStack);
+                case 3 ->  processUnary(token.castTo(UnaryOp.class), operatorStack);
                 case 4 -> processBracket(token.castTo(BracketToken.class), outputRPN, operatorStack);
-                case 5 -> operatorStack.push(token);
+                case 5 -> processAssignment(token.castTo(AssignOp.class), outputRPN, operatorStack);
                 default ->  throw new RuntimeException("Equation %s has token %s which is unsupported".formatted(equation, token));
             }
         }
 
         // Pop any remaining binary operators
         while (!operatorStack.empty()) {
-            outputRPN.add(operatorStack.pop());
+            outputRPN.push(operatorStack.pop());
         }
 
         // Return RPN output
         return outputRPN;
     }
 
-    private static void processUnary(UnaryOperator unaryOperator, Stack<Token> operatorStack) {
-        if (unaryOperator.isNegate()) {
-            operatorStack.push(unaryOperator);
-            return;
-        } else if (!operatorStack.isEmpty()) {
-            operatorStack.push(unaryOperator);
+    private static void processAssignment(AssignOp assignOp, Stack<Token> outputRPN, Stack<Token> operatorStack) {
+        if (outputRPN.isEmpty()) {
+            throw new RuntimeException("Calling assignment operation without lhs portion: " + assignOp.getSign());
+        }
+
+        if (outputRPN.peek() instanceof VariableToken) {
+            operatorStack.push(assignOp.setTargetVariable(outputRPN.pop().getSign()));
             return;
         }
 
-        throw new RuntimeException("missing operator before unary action " + unaryOperator.getSign());
+        throw new RuntimeException("Calling assignment operation with invalid lhs portion: " + outputRPN.peek().getSign());
+    }
+
+    private static void processUnary(UnaryOp unaryOp, Stack<Token> operatorStack) {
+        if (unaryOp.isNegate()) {
+            operatorStack.push(unaryOp);
+            return;
+        } else if (!operatorStack.isEmpty()) {
+            operatorStack.push(unaryOp);
+            return;
+        }
+
+        throw new RuntimeException("missing operator before unary action " + unaryOp.getSign());
     }
 
 
@@ -55,14 +69,14 @@ public class Parserfire {
      * @param outputRPN             The RPN output of the parser.
      * @param operatorStack         The current operator stack.
      */
-    protected static void processValue(Token currentToken, List<Token> outputRPN, Stack<Token> operatorStack) {
+    protected static void processValueOrVariable(Token currentToken, Stack<Token> outputRPN, Stack<Token> operatorStack) {
         // Immediately add the token to the output
-        outputRPN.add(currentToken);
+        outputRPN.push(currentToken);
 
         // Pop all of the unary operators at the top of the stack and add them to
         // the output
-        while (!operatorStack.empty() && (operatorStack.peek() instanceof UnaryOperator)) {
-            outputRPN.add(operatorStack.pop());
+        while (!operatorStack.empty() && (operatorStack.peek() instanceof UnaryOp)) {
+            outputRPN.push(operatorStack.pop());
         }
     }
 
@@ -73,7 +87,7 @@ public class Parserfire {
      * @param operatorStack         The current operator stack.
      */
     protected static void processBinaryOperator(BinaryOp currentToken,
-                                                List<Token> outputRPN,
+                                                Stack<Token> outputRPN,
                                                 Stack<Token> operatorStack) {
         while (!operatorStack.empty()) {
             // Get the operator at the top of the stack
@@ -93,7 +107,7 @@ public class Parserfire {
             // current operator is left associative, pop the operator and add it to the stack
             // Otherwise, break, as we know there won't be any other operators in the stack satisfying the condition
             if (diff < 0 || (diff == 0 && currentToken.isLeftAssociative())) {
-                outputRPN.add(operatorStack.pop());
+                outputRPN.push(operatorStack.pop());
             } else{
                 break;
             }
@@ -108,7 +122,7 @@ public class Parserfire {
      * @param outputRPN             The RPN output of the parser.
      * @param operatorStack         The current operator stack.
      */
-    protected static void processBracket(BracketToken bracket, List<Token> outputRPN, Stack<Token> operatorStack) {
+    protected static void processBracket(BracketToken bracket, Stack<Token> outputRPN, Stack<Token> operatorStack) {
         // When close bracket is found, add all the operators in the stack to the output RPN until the matching
         // open bracket is found
         if (bracket.isOpening()) {
@@ -128,7 +142,7 @@ public class Parserfire {
                 break;
             }
 
-            outputRPN.add(operator);
+            outputRPN.push(operator);
         }
 
         // Check last operator was an open bracket
@@ -138,8 +152,8 @@ public class Parserfire {
 
         // Process all the unary operators at the top of the stack (as these apply to this bracket)
         while (!operatorStack.empty() &&
-                (operatorStack.peek() instanceof UnaryOperator unaryOperator && unaryOperator.isNegate())) {
-            outputRPN.add(operatorStack.pop());
+                (operatorStack.peek() instanceof UnaryOp unaryOp && unaryOp.isNegate())) {
+            outputRPN.push(operatorStack.pop());
         }
     }
 }
