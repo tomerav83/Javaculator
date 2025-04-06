@@ -5,11 +5,6 @@ import lombok.NoArgsConstructor;
 import org.javaculator.shuntified.lexer.stages.TokenizationStage;
 import org.javaculator.shuntified.models.Token;
 import org.javaculator.shuntified.models.bracket.BracketToken;
-import org.javaculator.shuntified.models.bracket.Brackets;
-import org.javaculator.shuntified.models.operator.Operator;
-import org.javaculator.shuntified.models.operator.impl.BinaryOp;
-import org.javaculator.shuntified.models.operator.impl.UnaryOp;
-import org.javaculator.shuntified.pattern.Patterns;
 
 import java.util.List;
 

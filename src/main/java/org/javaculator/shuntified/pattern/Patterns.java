@@ -11,7 +11,7 @@ public class Patterns {
             Pattern.compile("([A-Za-z_][A-Za-z0-9_]*)\\s*--");
     public static final Pattern POST_INC =
             Pattern.compile("([A-Za-z_][A-Za-z0-9_]*)\\s*\\+\\+");
-    public static final Pattern NEGATE = Pattern.compile("(?<!(\\d|\\)))-(?!=)");
+    public static final Pattern NEGATE = Pattern.compile("(?<!(\\d|[eE]|[pP]|-))-(?!=)");
 
     public static final Pattern POST_INCREMENT =
             Pattern.compile("postinc\\(([A-Za-z_][A-Za-z0-9_]*)\\)");
@@ -23,44 +23,13 @@ public class Patterns {
             Pattern.compile("predec\\(([A-Za-z_][A-Za-z0-9_]*)\\)");
     public static final Pattern NEGATION = Pattern.compile("−");
 
-    public static final Pattern ADD = Pattern.compile("\\+");
-    public static final Pattern SUB = Pattern.compile("-");
-    public static final Pattern MULTIPLY = Pattern.compile("\\*");
-    public static final Pattern DIV = Pattern.compile("/");
-    public static final Pattern MOD = Pattern.compile("%");
-    public static final Pattern ASSIGN = Pattern.compile("=");
-    public static final Pattern ADD_ASSIGN = Pattern.compile("\\+=");
-    public static final Pattern SUB_ASSIGN = Pattern.compile("-=");
-    public static final Pattern MULTIPLY_ASSIGN = Pattern.compile("\\*=");
-    public static final Pattern DIV_ASSIGN = Pattern.compile("/=");
-    public static final Pattern MOD_ASSIGN = Pattern.compile("%=");
-
     public static final Pattern VARIABLES =
-            Pattern.compile("(?<!\\d)\\b[a-zA-Z_$][a-zA-Z0-9_$]*\\b");
+            Pattern.compile("(?<![a-zA-Z0-9_$])[a-zA-Z_$][a-zA-Z0-9_$]*(?![a-zA-Z0-9_$])");
 
-    public static final Pattern NUMBERS = Pattern.compile(
-            "(?:" +
-                    // Decimal floating-point literals:
-                    // 1. With a decimal point (digits before the dot are required):
-                    "[0-9](?:_*[0-9])*\\.(?:[0-9](?:_*[0-9])*)?(?:[eE][+-]?[0-9](?:_*[0-9])*)?[fFdD]?|" +
-                    // 2. Leading dot (no whole part):
-                    "\\.[0-9](?:_*[0-9])*(?:[eE][+-]?[0-9](?:_*[0-9])*)?[fFdD]?|" +
-                    // 3. Exponent-only (no dot, but an exponent is required):
-                    "[0-9](?:_*[0-9])*[eE][+-]?[0-9](?:_*[0-9])*[fFdD]?|" +
-                    // 4. Float with suffix only (if no dot or exponent):
-                    "[0-9](?:_*[0-9])*[fFdD]|" +
-                    // Hexadecimal floating-point literal:
-                    "0[xX][0-9A-Fa-f](?:_*[0-9A-Fa-f])*\\.?" +
-                    "(?:[0-9A-Fa-f](?:_*[0-9A-Fa-f])*)?\\.[pP][+-]?[0-9](?:_*[0-9])*[fFdD]?|" +
-                    // Now, integer literals:
-                    // Hexadecimal integer:
-                    "0[xX][0-9A-Fa-f](?:_*[0-9A-Fa-f])*[lL]?|" +
-                    // Binary integer:
-                    "0[bB][01](?:_*[01])*[lL]?|" +
-                    // Octal integer:
-                    "0(?:_*[0-7])*[lL]?|" +
-                    // Decimal integer:
-                    "(?:0|[1-9](?:_*[0-9])*)[lL]?" +
-                    ")"
-    );
+    public static final Pattern BINARY = Pattern.compile("\\b0B[01]+L?\\b", Pattern.CASE_INSENSITIVE);
+    public static final Pattern OCTAL = Pattern.compile("\\b0[0-7]+L?\\b", Pattern.CASE_INSENSITIVE);
+    public static final Pattern DECIMAL = Pattern.compile("\\b[0-9]+L?\\b", Pattern.CASE_INSENSITIVE);
+    public static final Pattern HEXADECIMAL = Pattern.compile("\\b0[xX][0-9a-fA-F]+L?\\b", Pattern.CASE_INSENSITIVE);
+    public static final Pattern DECIMAL_FP = Pattern.compile("(?:[0-9]+\\.[0-9]*|\\.[0-9]+)(?:[eE][+\\-]?[0-9]+)?[fFdD]?|[0-9]+[eE][+\\-]?[0-9]+[fFdD]?|[0-9]+[fFdD]", Pattern.CASE_INSENSITIVE);
+    public static final Pattern HEXADECIMAL_FP = Pattern.compile("0[xX](?:[0-9a-fA-F]+(?:\\.[0-9a-fA-F]*)?|\\.[0-9a-fA-F]+)(?:[pP][+\\-]?[0-9]+)?[fFdD]?", Pattern.CASE_INSENSITIVE);
 }

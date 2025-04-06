@@ -1,7 +1,7 @@
 package org.javaculator;
 
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.javaculator.antlr4.Javaculator;
+import org.javaculator.shuntified.ShuntiCalc;
+import org.javaculator.shuntified.calculator.Calculator;
 import org.javaculator.terminal.JLineTerminal;
 import org.javaculator.terminal.TerminalLogger;
 import org.jline.reader.LineReader;
@@ -10,8 +10,7 @@ import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 
 public class Cli {
-    private static final Javaculator CALCULATOR = new Javaculator();
-    private static final BailErrorStrategy ERROR_STRATEGY = new BailErrorStrategy();
+    public static final ShuntiCalc calculator = new ShuntiCalc();
 
     public static void main(String[] args) {
         try (Terminal terminal = JLineTerminal.get()){
@@ -37,7 +36,7 @@ public class Cli {
                 break;
             }
 
-            CALCULATOR.prepareAndInvokeCalculation(input);
+            calculator.calculate(input);
         } while (input != null);
     }
 }

@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'application'
     id 'jacoco'
-    id 'antlr'
     id("com.diffplug.spotless") version "7.0.2"
 }
 
@@ -13,14 +12,13 @@ repositories {
 }
 
 dependencies {
-    antlr "org.antlr:antlr4:4.13.1"
-    implementation "org.antlr:antlr4-runtime:4.13.1"
     implementation 'org.jline:jline:3.25.0'
-    implementation("ch.obermuhlner:big-math:2.3.2")
+    implementation("org.apache.commons:commons-lang3:3.0")
 
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
 
+    testImplementation("net.jqwik:jqwik:1.9.2")
     testCompileOnly 'org.projectlombok:lombok:1.18.26'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
     testImplementation 'org.mockito:mockito-core:5.0.0'
@@ -39,17 +37,10 @@ jacocoTestReport {
 
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['org/javaculator/antlr4/gen/**',
-                                        'org/javaculator/antlr4/handlers/interfaces/**',
-                                        'org/javaculator/terminal/**',
+            fileTree(dir: it, exclude: ['org/javaculator/terminal/**',
                                         'org/javaculator/Cli**'])
         }))
     }
-}
-
-generateGrammarSource {
-    maxHeapSize = "64m"
-    arguments += ["-visitor", "-long-messages"]
 }
 
 tasks.withType(JavaCompile) {

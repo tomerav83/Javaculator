@@ -1,6 +1,6 @@
 package org.javaculator.shuntified.lexer;
 
-import org.javaculator.shuntified.lexer.exception.UnhandledTokenException;
+import org.javaculator.shuntified.exceptions.lexer.UnhandledTokenException;
 import org.javaculator.shuntified.lexer.stages.TokenizationStage;
 import org.javaculator.shuntified.lexer.stages.impl.BracketStage;
 import org.javaculator.shuntified.lexer.stages.impl.LiteralStage;
@@ -17,13 +17,17 @@ public class StagingLexer {
     private final String input;
 
 
-    public StagingLexer(String input) {
+    private StagingLexer(String input) {
         this.stages = List.of(
                 OperatorStage.create(),
                 BracketStage.create(),
-                VariableStage.create(input),
-                LiteralStage.create(input));
+                LiteralStage.create(input),
+                VariableStage.create(input));
         this.input = InputPreprocessor.preprocess(input);
+    }
+
+    public static StagingLexer create(String input) {
+        return new StagingLexer(input);
     }
 
     public List<Token> tokenize() throws UnhandledTokenException {

@@ -14,7 +14,7 @@ public class VariableStage implements TokenizationStage {
     private final List<String> variables;
 
     public static VariableStage create(String input) {
-        return new VariableStage(VariableCollector.INSTANCE.collect(input));
+        return new VariableStage(VariableCollector.INSTANCE.collectByPattern(input));
     }
 
     @Override

@@ -1,9 +1,13 @@
 package org.javaculator.shuntified.cache;
 
+import org.javaculator.shuntified.exceptions.eval.MathOperationException;
+import org.javaculator.shuntified.exceptions.eval.MissingVariableEntryException;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.DoubleBinaryOperator;
 
 /**
  * A simple cache with rollback functionality.
@@ -51,30 +55,6 @@ public class RollbackCache {
         snapshot.putAll(cache);
     }
 
-    public Double decrement(String key, boolean isPost) {
-        return Optional.ofNullable(cache.get(key))
-                .map((Double prev) -> {
-                    if (isPost) {
-                        return putAndGetPrevious(key, prev - 1);
-                    }
-
-                    return putAndGetCurrent(key, prev - 1);
-                })
-                .orElseThrow(() -> new RuntimeException("invalid decrement of missing or null variable: %s".formatted(key)));
-    }
-
-    public Double increment(String key, boolean isPost) {
-        return Optional.ofNullable(cache.get(key))
-                .map((Double prev) -> {
-                    if (isPost) {
-                        return putAndGetPrevious(key, prev + 1);
-                    }
-
-                    return putAndGetCurrent(key, prev + 1);
-                })
-                .orElseThrow(() -> new RuntimeException("invalid increment of missing or null variable: %s".formatted(key)));
-    }
-
     /**
      * Retrieves the value associated with the given key from the cache.
      *
@@ -82,30 +62,41 @@ public class RollbackCache {
      * @return the {@link BigDecimal} value associated with the key, or {@code null} if the key is not present.
      */
     public Double get(String key) {
-        return cache.get(key);
+        return Optional.ofNullable(cache.get(key))
+                .orElseThrow(() -> new MissingVariableEntryException(key));
     }
 
-    /**
-     * Stores the given value under the specified key in the cache and returns the value.
-     *
-     * @param key   the key under which to store the value.
-     * @param value the value to store.
-     * @return the value that was stored.
-     */
-    public Double putAndGetCurrent(String key, Double value) {
-        cache.put(key, value);
-        return value;
+    public Double putAndGetCurrent(String key, Double rhs) {
+        cache.put(key, rhs);
+        return rhs;
     }
 
-    /**
-     * Stores the given value under the specified key in the cache and returns the previous value.
-     *
-     * @param key   the key under which to store the new value.
-     * @param value the new value to store.
-     * @return the previous {@link BigDecimal} value associated with the key, or {@code null} if there was none.
-     */
-    public Double putAndGetPrevious(String key, Double value) {
-        return cache.put(key, value);
+    public Double putAndGetCurrent(String key, Double rhs, DoubleBinaryOperator op) {
+        return Optional.ofNullable(cache.get(key))
+                .map((Double lhs) -> applyOperator(lhs, rhs, op))
+                .map((Double updated) -> {
+                    cache.put(key, updated);
+                    return updated;
+                })
+                .orElseThrow(() -> new MissingVariableEntryException(key));
+    }
+
+    public Double putAndGetPrevious(String key, Double rhs, DoubleBinaryOperator op) {
+        return Optional.ofNullable(cache.get(key))
+                .map((Double lhs) -> cache.put(key, applyOperator(lhs, rhs, op)))
+                .orElseThrow(() -> new MissingVariableEntryException(key));
+    }
+
+    private static Double applyOperator(Double  lhs, Double rhs, DoubleBinaryOperator op) {
+        try {
+            return op.applyAsDouble(lhs, rhs);
+        } catch (Exception e) {
+            throw new MathOperationException(e);
+        }
+    }
+
+    public boolean contains(String key) {
+        return cache.containsKey(key);
     }
 
     /**

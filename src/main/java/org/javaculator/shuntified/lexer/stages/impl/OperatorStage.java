@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.javaculator.shuntified.lexer.stages.TokenizationStage;
 import org.javaculator.shuntified.models.Token;
+import org.javaculator.shuntified.models.Token.Association;
 import org.javaculator.shuntified.models.operator.Operator;
 import org.javaculator.shuntified.models.operator.impl.AssignOp;
 import org.javaculator.shuntified.models.operator.impl.BinaryOp;
@@ -15,22 +16,21 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OperatorStage implements TokenizationStage {
     private final List<Operator> operators = List.of(
-            UnaryOp.create("post_inc", Patterns.POST_INCREMENT, Token.Association.LEFT, 1),
-            UnaryOp.create("post_dec", Patterns.POST_DECREMENT, Token.Association.LEFT, 1),
-            UnaryOp.create("pre_inc", Patterns.PRE_INCREMENT, Token.Association.RIGHT, 2),
-            UnaryOp.create("pre_dec", Patterns.PRE_DECREMENT, Token.Association.RIGHT, 2),
-            UnaryOp.create("−", Patterns.NEGATION, Token.Association.RIGHT, 2),
-            AssignOp.create("=", Patterns.ASSIGN, Token.Association.RIGHT, 5),
-            AssignOp.create("+=", Patterns.ADD_ASSIGN, Token.Association.RIGHT, 5),
-            AssignOp.create("-=", Patterns.SUB_ASSIGN, Token.Association.RIGHT, 5),
-            AssignOp.create("*=", Patterns.MULTIPLY_ASSIGN, Token.Association.RIGHT, 5),
-            AssignOp.create("/=", Patterns.DIV_ASSIGN, Token.Association.RIGHT, 5),
-            AssignOp.create("%=", Patterns.MOD_ASSIGN, Token.Association.RIGHT, 5),
-            BinaryOp.create("+", Patterns.ADD, Token.Association.LEFT, 4),
-            BinaryOp.create("-", Patterns.SUB, Token.Association.LEFT, 4),
-            BinaryOp.create("*", Patterns.MULTIPLY, Token.Association.LEFT, 3),
-            BinaryOp.create("/", Patterns.DIV, Token.Association.LEFT, 3),
-            BinaryOp.create("%", Patterns.MOD, Token.Association.LEFT, 3)
+            UnaryOp.create("post_inc", Association.LEFT, 1, Patterns.POST_INCREMENT),
+            UnaryOp.create("post_dec", Association.LEFT, 1, Patterns.POST_DECREMENT),
+            UnaryOp.create("pre_inc", Association.RIGHT, 2, Patterns.PRE_INCREMENT),
+            UnaryOp.create("pre_dec", Association.RIGHT, 2, Patterns.PRE_DECREMENT),
+            AssignOp.create("="),
+            AssignOp.create("+="),
+            AssignOp.create("-="),
+            AssignOp.create("*="),
+            AssignOp.create("/="),
+            AssignOp.create("%="),
+            BinaryOp.create("+", Association.LEFT, 4),
+            BinaryOp.create("-", Association.LEFT, 4),
+            BinaryOp.create("*", Association.LEFT, 3),
+            BinaryOp.create("/", Association.LEFT, 3),
+            BinaryOp.create("%", Association.LEFT, 3)
     );
 
     public static OperatorStage create() {
@@ -40,7 +40,9 @@ public class OperatorStage implements TokenizationStage {
     @Override
     public Token match(String input, int position) {
         for (Operator operator : operators) {
-            if (operator.isMatching(input, position)) {
+            if (operator instanceof UnaryOp unaryOp && unaryOp.matchByPattern(input, position)) {
+                return unaryOp;
+            } else if (input.startsWith(operator.getSign(), position)) {
                 return operator;
             }
         }

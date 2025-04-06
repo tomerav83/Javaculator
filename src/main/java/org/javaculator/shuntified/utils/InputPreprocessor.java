@@ -16,18 +16,11 @@ public class InputPreprocessor {
                 .replaceByPattern(Patterns.PRE_INC, "preinc(%s)")
                 .replaceByPattern(Patterns.POST_DEC, "postdec(%s)")
                 .replaceByPattern(Patterns.POST_INC, "postinc(%s)")
-                .replaceNegate();
+                .removeWhitespace();
     }
 
-    private String replaceNegate() {
-        char[] characters = input.replace(" ", "").toCharArray();
-        Matcher matcher = Patterns.NEGATE.matcher(new String(characters));
-
-        while (matcher.find()) {
-            characters[matcher.start()] = '−';
-        }
-
-        return new String(characters);
+    private String removeWhitespace() {
+        return input.replace(" ", "");
     }
 
     private InputPreprocessor replaceByPattern(Pattern pattern, String format) {
@@ -38,9 +31,5 @@ public class InputPreprocessor {
         }
 
         return this;
-    }
-
-    private String finish() {
-        return input.replace(" ", "");
     }
 }

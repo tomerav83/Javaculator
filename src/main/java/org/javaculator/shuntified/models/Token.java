@@ -15,4 +15,9 @@ public abstract class Token {
     public <T> T castTo(Class<T> clazz) {
         return clazz.cast(this);
     }
+
+    @Override
+    public String toString() {
+        return "Token: %s".formatted(sign);
+    }
 }
