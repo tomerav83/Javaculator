@@ -34,6 +34,8 @@ test {
     environment "DISABLE_LOGGING", "true"
 }
 
+mainClassName = project.hasProperty('mainClass') ? project.mainClass : 'org.javaculator.antlr4.Cli'
+
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
 
@@ -59,13 +61,13 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainClass = 'org.javaculator.Cli'
+    mainClass = mainClassName
 }
 
 jar {
     manifest {
         attributes(
-                'Main-Class': 'org.javaculator.Cli'
+                'Main-Class': mainClassName
         )
     }
 
